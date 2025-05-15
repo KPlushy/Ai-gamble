@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Grand Casino</title>
+    <title>AI Grand Casino - Full Suite</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -31,6 +31,7 @@
                 <button class="menu-button" data-screen="stock-market-screen">Stock Market</button>
                 <button class="menu-button" data-screen="dice-game-screen">Dice Game</button>
                 <button class="menu-button" data-screen="roulette-screen">Roulette</button>
+                <button class="menu-button" data-screen="wheel-of-fortune-screen">Wheel of Fortune</button>
                 <button class="menu-button" data-screen="shop-screen">Shop</button>
             </div>
         </div>
@@ -51,7 +52,7 @@
                     <input type="number" id="slot-bet" value="5" min="1">
                     <button id="spin-button">Spin!</button>
                 </div>
-                <p id="slots-result">Press Spin!</p>
+                <p id="slots-result" class="game-message">Press Spin!</p>
             </div>
         </div>
 
@@ -60,7 +61,15 @@
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Plinko</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-plinko">0</span></div>
-            <div id="plinko-game-content"><p>Plinko Game Area - Drop a ball and watch it bounce!</p><button>Drop Ball (Cost: 5 Points)</button></div>
+            <div id="plinko-game-content">
+                <canvas id="plinko-canvas" width="500" height="450"></canvas>
+                <div class="plinko-controls">
+                    <label for="plinko-bet">Bet per Ball:</label>
+                    <input type="number" id="plinko-bet-input" value="5" min="1"> <!-- Renamed to avoid clash -->
+                    <button id="drop-plinko-ball-button">Drop Ball</button> <!-- Renamed for clarity -->
+                </div>
+                <p id="plinko-message" class="game-message">Drop a ball and see where it lands!</p>
+            </div>
         </div>
 
         <!-- Blackjack Screen -->
@@ -69,14 +78,24 @@
             <h2>Blackjack</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-blackjack">0</span></div>
             <div id="blackjack-game-content">
-                <p>Blackjack Game Area - Get as close to 21 as possible without going over!</p>
-                <div id="blackjack-player-hand">Player Hand:</div>
-                <div id="blackjack-dealer-hand">Dealer Hand:</div>
-                <input type="number" id="blackjack-bet" value="10" min="1">
-                <button id="blackjack-deal">Deal</button>
-                <button id="blackjack-hit" disabled>Hit</button>
-                <button id="blackjack-stand" disabled>Stand</button>
-                <p id="blackjack-message"></p>
+                <div id="blackjack-table">
+                    <div class="hand-area">
+                        <h3>Dealer's Hand (<span id="blackjack-dealer-score">0</span>)</h3>
+                        <div id="blackjack-dealer-cards" class="cards-container"></div>
+                    </div>
+                    <div class="hand-area">
+                        <h3>Your Hand (<span id="blackjack-player-score">0</span>)</h3>
+                        <div id="blackjack-player-cards" class="cards-container"></div>
+                    </div>
+                </div>
+                <div id="blackjack-controls">
+                    <label for="blackjack-bet-input-field">Bet:</label> <!-- Renamed ID for clarity -->
+                    <input type="number" id="blackjack-bet-input-field" value="10" min="1">
+                    <button id="blackjack-deal-button">Deal</button>
+                    <button id="blackjack-hit-button" disabled>Hit</button>
+                    <button id="blackjack-stand-button" disabled>Stand</button>
+                </div>
+                <p id="blackjack-message" class="game-message">Place your bet and click Deal!</p>
             </div>
         </div>
 
@@ -85,7 +104,26 @@
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Poker (Five Card Draw)</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-poker">0</span></div>
-            <div id="poker-game-content"><p>Poker Game Area - Aim for the best hand!</p> <button>Deal (Cost: 10 Points)</button></div>
+            <div id="poker-game-content">
+                <div id="poker-table">
+                    <div id="poker-player-hand" class="cards-container poker-hand"></div>
+                    <div id="poker-hand-rank-display">Hand: ---</div>
+                </div>
+                <div id="poker-controls">
+                    <label for="poker-bet-input-field">Bet:</label> <!-- Renamed ID for clarity -->
+                    <input type="number" id="poker-bet-input-field" value="10" min="1">
+                    <button id="poker-deal-draw-button">Deal</button>
+                </div>
+                <div id="poker-payout-table-display">
+                    <h4>Payout Table (Multiplier x Bet)</h4>
+                    <ul id="payout-list">
+                        <li>Jacks or Better: 1x</li><li>Two Pair: 2x</li><li>Three of a Kind: 3x</li>
+                        <li>Straight: 4x</li><li>Flush: 6x</li><li>Full House: 9x</li>
+                        <li>Four of a Kind: 25x</li><li>Straight Flush: 50x</li><li>Royal Flush: 250x</li>
+                    </ul>
+                </div>
+                <p id="poker-message" class="game-message">Place your bet and click Deal!</p>
+            </div>
         </div>
 
         <!-- Scratch Cards Screen -->
@@ -93,7 +131,24 @@
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Scratch Cards</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-scratch">0</span></div>
-            <div id="scratch-cards-game-content"><p>Scratch Card Game Area - Buy a card and scratch to win!</p><button>Buy Card (Cost: 5 Points)</button></div>
+            <div id="scratch-cards-game-content">
+                <div id="scratch-card-area">
+                    <div id="scratch-card-holder">
+                        <div id="scratch-card-symbols" class="symbols-grid"></div>
+                        <canvas id="scratch-card-canvas"></canvas>
+                    </div>
+                    <div id="scratch-card-prize-info">
+                        <p>Match 3 symbols to win!</p>
+                        <p>Cost per Card: <span id="scratch-card-cost">10</span> Points</p>
+                        <p>Potential Prizes: <span id="scratch-card-potential-prizes">2x, 5x, 10x, 50x Cost!</span></p>
+                    </div>
+                </div>
+                <div id="scratch-card-controls">
+                    <button id="buy-scratch-card-button">Buy New Card</button>
+                    <button id="reveal-all-scratch-button" disabled>Reveal All</button>
+                </div>
+                <p id="scratch-card-message" class="game-message">Buy a card to start scratching!</p>
+            </div>
         </div>
 
         <!-- Horse Races Screen -->
@@ -102,13 +157,21 @@
             <h2>Horse Races</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-horse">0</span></div>
             <div id="horse-races-game-content">
-                <p>Horse Race Betting - Pick your champion!</p>
-                <div id="horse-selection-area">
-                    <!-- Horses will be populated by JS -->
+                <div id="race-track-container">
+                    <div id="race-track"><div class="finish-line"></div></div>
                 </div>
-                <input type="number" id="horse-bet-amount" value="10" min="1">
-                <button id="start-horse-race">Start Race!</button>
-                <p id="horse-race-result"></p>
+                <div id="horse-betting-area">
+                    <h3>Place Your Bet</h3>
+                    <div id="horse-selection-area"><p>Loading horses...</p></div>
+                    <div id="insight-choice-area" style="display: none;">
+                        <h4>Race Insight Active!</h4> <p>Pick one of these contenders:</p>
+                        <div id="insight-horses-selection"></div>
+                    </div>
+                    <label for="horse-bet-amount-input">Bet Amount:</label> <!-- Renamed ID -->
+                    <input type="number" id="horse-bet-amount-input" value="10" min="1">
+                    <button id="start-horse-race-button">Start Race!</button>
+                </div>
+                <p id="horse-race-result" class="game-message">Select a horse and place your bet!</p>
             </div>
         </div>
 
@@ -117,25 +180,109 @@
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Stock Market Gamble</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-stock">0</span></div>
-            <div id="stock-market-game-content"><p>Stock Market Area - Invest and hope the price goes up!</p><button>Invest (Cost: varies)</button></div>
+            <div id="stock-market-game-content">
+                <div id="stock-list-area">
+                    <h3>Available Stocks (Day: <span id="stock-market-day">0</span>)</h3>
+                    <table id="stocks-table">
+                        <thead><tr><th>Symbol</th><th>Company</th><th>Price</th><th>Change</th><th>Action</th></tr></thead>
+                        <tbody id="stocks-table-body"></tbody>
+                    </table>
+                </div>
+                <div id="stock-trading-area">
+                    <h4>Trade Stocks</h4>
+                    <label for="stock-symbol-select">Stock:</label><select id="stock-symbol-select"></select>
+                    <label for="stock-quantity-input">Quantity:</label><input type="number" id="stock-quantity-input" value="1" min="1">
+                    <button id="buy-stock-button">Buy</button><button id="sell-stock-button">Sell</button>
+                </div>
+                <div id="stock-portfolio-area">
+                    <h3>Your Portfolio</h3>
+                    <table id="portfolio-table">
+                        <thead><tr><th>Symbol</th><th>Shares</th><th>Avg. Buy</th><th>Current Price</th><th>Value</th><th>P/L</th></tr></thead>
+                        <tbody id="portfolio-table-body"></tbody>
+                    </table>
+                    <p>Total Portfolio Value: <span id="total-portfolio-value">0</span> points</p>
+                </div>
+                <button id="next-stock-day-button">Advance to Next Day</button>
+                <p id="stock-market-message" class="game-message">Buy/sell to make profit!</p>
+                <div id="stock-news-flash" class="game-message" style="display:none;"></div>
+            </div>
         </div>
 
         <!-- Dice Game Screen -->
         <div id="dice-game-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
-            <h2>Dice Game (e.g., Over/Under 7)</h2>
+            <h2>Dice Game - Guess the Sum!</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-dice">0</span></div>
-            <div id="dice-game-content"><p>Dice Game Area - Bet on the roll of two dice!</p><button>Roll Dice (Cost: 5 Points)</button></div>
+            <div id="dice-game-content">
+                <div id="dice-display-area"><div class="dice" id="dice1">?</div><div class="dice" id="dice2">?</div></div>
+                <p id="dice-sum-display">Total: ?</p>
+                <div id="dice-betting-controls">
+                    <label for="dice-target-sum-select">Your Target Sum (2-12):</label> <!-- Renamed ID -->
+                    <select id="dice-target-sum-select"></select>
+                    <label for="dice-bet-amount-input">Bet Amount:</label> <!-- Renamed ID -->
+                    <input type="number" id="dice-bet-amount-input" value="10" min="1">
+                    <button id="roll-dice-button">Roll Dice!</button>
+                </div>
+                <div id="dice-payout-info"><p>Payout for <span id="selected-sum-payout-display">7</span> is <span id="payout-rate-display">4</span>x your bet.</p></div>
+                <p id="dice-game-message" class="game-message">Select target sum and bet!</p>
+            </div>
         </div>
 
         <!-- Roulette Screen -->
         <div id="roulette-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
-            <h2>Roulette</h2>
+            <h2>Roulette (European)</h2>
             <div class="player-stats-ingame">Points: <span id="points-display-roulette">0</span></div>
-            <div id="roulette-game-content"><p>Roulette Game Area - Place your bets and spin the wheel!</p><button>Spin Wheel (Cost: Bet Amount)</button></div>
+            <div id="roulette-game-content">
+                <div id="roulette-wheel-area">
+                    <div id="roulette-wheel-display">Spinning...</div>
+                    <div id="roulette-winning-number">?</div>
+                </div>
+                <div id="roulette-betting-table">
+                    <div class="bet-cell zero" data-bet-type="number" data-bet-value="0">0</div>
+                    <div class="numbers-grid"></div>
+                    <div class="outside-bets-row1">
+                        <div class="bet-cell outside" data-bet-type="dozen" data-bet-value="1st12">1st 12</div>
+                        <div class="bet-cell outside" data-bet-type="dozen" data-bet-value="2nd12">2nd 12</div>
+                        <div class="bet-cell outside" data-bet-type="dozen" data-bet-value="3rd12">3rd 12</div>
+                    </div>
+                    <div class="outside-bets-row2">
+                        <div class="bet-cell outside" data-bet-type="range" data-bet-value="1-18">1 to 18</div>
+                        <div class="bet-cell outside" data-bet-type="evenOdd" data-bet-value="even">EVEN</div>
+                        <div class="bet-cell outside red" data-bet-type="color" data-bet-value="red">RED</div>
+                        <div class="bet-cell outside black" data-bet-type="color" data-bet-value="black">BLACK</div>
+                        <div class="bet-cell outside" data-bet-type="evenOdd" data-bet-value="odd">ODD</div>
+                        <div class="bet-cell outside" data-bet-type="range" data-bet-value="19-36">19 to 36</div>
+                    </div>
+                </div>
+                <div id="roulette-controls">
+                    <label for="roulette-bet-amount-chip-input">Bet per Click:</label> <!-- Renamed ID -->
+                    <input type="number" id="roulette-bet-amount-chip-input" value="5" min="1">
+                    <button id="roulette-spin-button">Spin Wheel</button>
+                    <button id="roulette-clear-bets-button">Clear Bets</button>
+                    <p>Total Bet: <span id="roulette-total-bet-display">0</span></p>
+                </div>
+                <p id="roulette-message" class="game-message">Place your bets!</p>
+            </div>
         </div>
-
+        
+        <!-- Wheel of Fortune Screen -->
+        <div id="wheel-of-fortune-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Wheel of Fortune</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-wof">0</span></div>
+            <div id="wof-game-content">
+                <div id="wof-container">
+                    <div id="wof-pointer">▼</div>
+                    <div id="wof-wheel"></div>
+                </div>
+                <div id="wof-controls">
+                    <p>Cost to Spin: <span id="wof-cost-display">25</span> Points</p>
+                    <button id="wof-spin-button">Spin the Wheel!</button>
+                </div>
+                <p id="wof-message" class="game-message">Spin to win exciting prizes!</p>
+            </div>
+        </div>
 
         <!-- Shop Screen -->
         <div id="shop-screen" class="screen">
@@ -150,11 +297,10 @@
                 </div>
                 <div class="shop-item" id="horse-upgrade-item">
                     <h3>Horse Race Insight</h3>
-                    <p>Allows you to pick between the two most likely horses to win (one-time purchase or limited uses per day - TBD).</p>
+                    <p>Pick between two likely winners.</p>
                     <p>Cost: <span id="horse-upgrade-cost">500</span> points</p>
-                    <button id="buy-horse-upgrade" >Buy Upgrade</button>
+                    <button id="buy-horse-upgrade">Buy Upgrade</button>
                 </div>
-                <!-- Add more shop items here -->
             </div>
         </div>
     </div>
