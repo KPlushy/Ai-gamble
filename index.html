@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Casino Games</title>
+    <title>AI Grand Casino</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
-            <h1>Welcome to AI Casino!</h1>
-            <p>Are you ready to test your luck?</p>
+            <h1>Welcome to AI Grand Casino!</h1>
+            <p>Your luck awaits! You start with 50 points.</p>
             <button id="play-button" class="action-button">Play Now</button>
         </div>
 
@@ -19,93 +19,140 @@
         <div id="main-menu-screen" class="screen">
             <h2>Main Menu</h2>
             <div class="player-stats">
-                Points: <span id="points-display">0</span>
+                Points: <span id="points-display">50</span>
             </div>
             <div class="menu-buttons">
-                <button class="menu-button" data-screen="slots-screen">Slots</button>
+                <button class="menu-button" data-screen="slots-screen">Slots (3x3)</button>
                 <button class="menu-button" data-screen="plinko-screen">Plinko</button>
                 <button class="menu-button" data-screen="blackjack-screen">Blackjack</button>
                 <button class="menu-button" data-screen="poker-screen">Poker</button>
+                <button class="menu-button" data-screen="scratch-cards-screen">Scratch Cards</button>
+                <button class="menu-button" data-screen="horse-races-screen">Horse Races</button>
+                <button class="menu-button" data-screen="stock-market-screen">Stock Market</button>
+                <button class="menu-button" data-screen="dice-game-screen">Dice Game</button>
+                <button class="menu-button" data-screen="roulette-screen">Roulette</button>
                 <button class="menu-button" data-screen="shop-screen">Shop</button>
             </div>
         </div>
 
-        <!-- Game Area Placeholder Screen (example for Slots) -->
+        <!-- Slots Screen (3x3 Grid) -->
         <div id="slots-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
-            <h2>Slots</h2>
-            <div class="player-stats-ingame">
-                Points: <span id="points-display-slots">0</span>
-            </div>
+            <h2>Slots (3x3)</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-slots">0</span></div>
             <div id="slots-game-content">
-                <p>Slots game will go here!</p>
-                <!-- Example: Bet buttons and spin button -->
-                <button>Bet 10</button>
-                <button>Spin!</button>
-                <p>Outcome: ...</p>
+                <div class="slots-grid-container">
+                    <div class="slot-reel">?</div><div class="slot-reel">?</div><div class="slot-reel">?</div>
+                    <div class="slot-reel">?</div><div class="slot-reel">?</div><div class="slot-reel">?</div>
+                    <div class="slot-reel">?</div><div class="slot-reel">?</div><div class="slot-reel">?</div>
+                </div>
+                <div class="slot-controls">
+                    <label for="slot-bet">Bet:</label>
+                    <input type="number" id="slot-bet" value="5" min="1">
+                    <button id="spin-button">Spin!</button>
+                </div>
+                <p id="slots-result">Press Spin!</p>
             </div>
         </div>
 
-        <!-- Game Area Placeholder Screen (example for Plinko) -->
+        <!-- Plinko Screen -->
         <div id="plinko-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Plinko</h2>
-            <div class="player-stats-ingame">
-                Points: <span id="points-display-plinko">0</span>
-            </div>
-            <div id="plinko-game-content">
-                <p>Plinko game will go here!</p>
-                 <button>Drop Ball!</button>
-            </div>
+            <div class="player-stats-ingame">Points: <span id="points-display-plinko">0</span></div>
+            <div id="plinko-game-content"><p>Plinko Game Area - Drop a ball and watch it bounce!</p><button>Drop Ball (Cost: 5 Points)</button></div>
         </div>
 
-        <!-- Game Area Placeholder Screen (example for Blackjack) -->
+        <!-- Blackjack Screen -->
         <div id="blackjack-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Blackjack</h2>
-             <div class="player-stats-ingame">
-                Points: <span id="points-display-blackjack">0</span>
-            </div>
+            <div class="player-stats-ingame">Points: <span id="points-display-blackjack">0</span></div>
             <div id="blackjack-game-content">
-                <p>Blackjack game will go here!</p>
-                <button>Deal</button>
-                <button>Hit</button>
-                <button>Stand</button>
+                <p>Blackjack Game Area - Get as close to 21 as possible without going over!</p>
+                <div id="blackjack-player-hand">Player Hand:</div>
+                <div id="blackjack-dealer-hand">Dealer Hand:</div>
+                <input type="number" id="blackjack-bet" value="10" min="1">
+                <button id="blackjack-deal">Deal</button>
+                <button id="blackjack-hit" disabled>Hit</button>
+                <button id="blackjack-stand" disabled>Stand</button>
+                <p id="blackjack-message"></p>
             </div>
         </div>
 
-        <!-- Game Area Placeholder Screen (example for Poker) -->
+        <!-- Poker Screen -->
         <div id="poker-screen" class="screen game-screen">
             <button class="back-to-menu">← Back to Menu</button>
-            <h2>Poker</h2>
-            <div class="player-stats-ingame">
-                Points: <span id="points-display-poker">0</span>
-            </div>
-            <div id="poker-game-content">
-                <p>Poker game (e.g., Five Card Draw) will go here!</p>
-                <button>Deal</button>
-                <button>Draw</button>
+            <h2>Poker (Five Card Draw)</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-poker">0</span></div>
+            <div id="poker-game-content"><p>Poker Game Area - Aim for the best hand!</p> <button>Deal (Cost: 10 Points)</button></div>
+        </div>
+
+        <!-- Scratch Cards Screen -->
+        <div id="scratch-cards-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Scratch Cards</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-scratch">0</span></div>
+            <div id="scratch-cards-game-content"><p>Scratch Card Game Area - Buy a card and scratch to win!</p><button>Buy Card (Cost: 5 Points)</button></div>
+        </div>
+
+        <!-- Horse Races Screen -->
+        <div id="horse-races-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Horse Races</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-horse">0</span></div>
+            <div id="horse-races-game-content">
+                <p>Horse Race Betting - Pick your champion!</p>
+                <div id="horse-selection-area">
+                    <!-- Horses will be populated by JS -->
+                </div>
+                <input type="number" id="horse-bet-amount" value="10" min="1">
+                <button id="start-horse-race">Start Race!</button>
+                <p id="horse-race-result"></p>
             </div>
         </div>
+
+        <!-- Stock Market Screen -->
+        <div id="stock-market-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Stock Market Gamble</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-stock">0</span></div>
+            <div id="stock-market-game-content"><p>Stock Market Area - Invest and hope the price goes up!</p><button>Invest (Cost: varies)</button></div>
+        </div>
+
+        <!-- Dice Game Screen -->
+        <div id="dice-game-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Dice Game (e.g., Over/Under 7)</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-dice">0</span></div>
+            <div id="dice-game-content"><p>Dice Game Area - Bet on the roll of two dice!</p><button>Roll Dice (Cost: 5 Points)</button></div>
+        </div>
+
+        <!-- Roulette Screen -->
+        <div id="roulette-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Roulette</h2>
+            <div class="player-stats-ingame">Points: <span id="points-display-roulette">0</span></div>
+            <div id="roulette-game-content"><p>Roulette Game Area - Place your bets and spin the wheel!</p><button>Spin Wheel (Cost: Bet Amount)</button></div>
+        </div>
+
 
         <!-- Shop Screen -->
         <div id="shop-screen" class="screen">
             <button class="back-to-menu">← Back to Menu</button>
             <h2>Shop</h2>
-            <div class="player-stats-ingame">
-                Points: <span id="points-display-shop">0</span>
-            </div>
+            <div class="player-stats-ingame">Points: <span id="points-display-shop">0</span></div>
             <div id="shop-items">
                 <div class="shop-item">
-                    <h3>Point Multiplier (x2)</h3>
+                    <h3>Point Multiplier (Current: x<span id="current-multiplier-display">1</span>)</h3>
                     <p>Cost: <span id="multiplier-cost">100</span> points</p>
-                    <button id="buy-multiplier">Buy</button>
+                    <button id="buy-multiplier">Buy/Upgrade</button>
                 </div>
-                <div class="shop-item">
-                    <h3>Small Point Pack</h3>
-                    <p>Get 500 points instantly!</p>
-                    <p>Cost: 250 points</p>
-                    <button id="buy-point-pack">Buy</button>
+                <div class="shop-item" id="horse-upgrade-item">
+                    <h3>Horse Race Insight</h3>
+                    <p>Allows you to pick between the two most likely horses to win (one-time purchase or limited uses per day - TBD).</p>
+                    <p>Cost: <span id="horse-upgrade-cost">500</span> points</p>
+                    <button id="buy-horse-upgrade" >Buy Upgrade</button>
                 </div>
                 <!-- Add more shop items here -->
             </div>
