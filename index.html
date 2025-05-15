@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Casino Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>Welcome to AI Casino!</h1>
+            <p>Are you ready to test your luck?</p>
+            <button id="play-button" class="action-button">Play Now</button>
+        </div>
+
+        <!-- Main Menu Screen -->
+        <div id="main-menu-screen" class="screen">
+            <h2>Main Menu</h2>
+            <div class="player-stats">
+                Points: <span id="points-display">0</span>
+            </div>
+            <div class="menu-buttons">
+                <button class="menu-button" data-screen="slots-screen">Slots</button>
+                <button class="menu-button" data-screen="plinko-screen">Plinko</button>
+                <button class="menu-button" data-screen="blackjack-screen">Blackjack</button>
+                <button class="menu-button" data-screen="poker-screen">Poker</button>
+                <button class="menu-button" data-screen="shop-screen">Shop</button>
+            </div>
+        </div>
+
+        <!-- Game Area Placeholder Screen (example for Slots) -->
+        <div id="slots-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Slots</h2>
+            <div class="player-stats-ingame">
+                Points: <span id="points-display-slots">0</span>
+            </div>
+            <div id="slots-game-content">
+                <p>Slots game will go here!</p>
+                <!-- Example: Bet buttons and spin button -->
+                <button>Bet 10</button>
+                <button>Spin!</button>
+                <p>Outcome: ...</p>
+            </div>
+        </div>
+
+        <!-- Game Area Placeholder Screen (example for Plinko) -->
+        <div id="plinko-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Plinko</h2>
+            <div class="player-stats-ingame">
+                Points: <span id="points-display-plinko">0</span>
+            </div>
+            <div id="plinko-game-content">
+                <p>Plinko game will go here!</p>
+                 <button>Drop Ball!</button>
+            </div>
+        </div>
+
+        <!-- Game Area Placeholder Screen (example for Blackjack) -->
+        <div id="blackjack-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Blackjack</h2>
+             <div class="player-stats-ingame">
+                Points: <span id="points-display-blackjack">0</span>
+            </div>
+            <div id="blackjack-game-content">
+                <p>Blackjack game will go here!</p>
+                <button>Deal</button>
+                <button>Hit</button>
+                <button>Stand</button>
+            </div>
+        </div>
+
+        <!-- Game Area Placeholder Screen (example for Poker) -->
+        <div id="poker-screen" class="screen game-screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Poker</h2>
+            <div class="player-stats-ingame">
+                Points: <span id="points-display-poker">0</span>
+            </div>
+            <div id="poker-game-content">
+                <p>Poker game (e.g., Five Card Draw) will go here!</p>
+                <button>Deal</button>
+                <button>Draw</button>
+            </div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shop-screen" class="screen">
+            <button class="back-to-menu">← Back to Menu</button>
+            <h2>Shop</h2>
+            <div class="player-stats-ingame">
+                Points: <span id="points-display-shop">0</span>
+            </div>
+            <div id="shop-items">
+                <div class="shop-item">
+                    <h3>Point Multiplier (x2)</h3>
+                    <p>Cost: <span id="multiplier-cost">100</span> points</p>
+                    <button id="buy-multiplier">Buy</button>
+                </div>
+                <div class="shop-item">
+                    <h3>Small Point Pack</h3>
+                    <p>Get 500 points instantly!</p>
+                    <p>Cost: 250 points</p>
+                    <button id="buy-point-pack">Buy</button>
+                </div>
+                <!-- Add more shop items here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
