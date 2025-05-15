@@ -1,66 +1,53 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Existing styles remain, add these: */
+
+/* Slots Grid */
+.slots-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    width: 200px; /* Adjust as needed */
+    height: 200px; /* Adjust as needed */
+    margin: 20px auto;
+    background-color: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #ffdd57;
+}
+
+.slot-reel {
+    background-color: #fff;
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    overflow: hidden; /* Prevents scrollbars during transitions */
+    font-size: 2em;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
-.game-container {
-    width: 90%;
-    max-width: 800px;
-    min-height: 500px; /* Ensure a minimum height */
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    position: relative; /* For positioning screens absolutely if needed */
-    overflow: hidden; /* To contain screen transitions */
-}
-
-.screen {
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    align-items: center;
+.slot-controls {
+    margin-top: 15px;
+    display: flex;
     justify-content: center;
-    width: 100%;
-    height: 100%;
-    position: absolute; /* Position screens on top of each other */
-    top: 0;
-    left: 0;
-    padding: 20px;
-    box-sizing: border-box;
-    animation: fadeIn 0.5s ease-in-out;
+    align-items: center;
+    gap: 10px;
 }
 
-.screen.active {
-    display: flex; /* Show active screen */
+.slot-controls label {
+    font-size: 1em;
+}
+.slot-controls input[type="number"] {
+    width: 60px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-
-h1 {
-    font-size: 2.8em;
-    margin-bottom: 20px;
-    color: #ffdd57; /* Gold-ish yellow */
-}
-
-h2 {
-    font-size: 2.2em;
-    margin-bottom: 25px;
-    color: #ffdd57;
-}
-
-.player-stats, .player-stats-ingame {
+/* Ensure player-stats-ingame are correctly placed */
+.game-screen .player-stats-ingame, #shop-screen .player-stats-ingame {
     position: absolute;
     top: 20px;
     right: 30px;
@@ -69,131 +56,40 @@ h2 {
     padding: 8px 15px;
     border-radius: 8px;
 }
-
-.player-stats-ingame { /* Specific for in-game/shop for potential adjustments */
-    /*  May add different styles if needed */
-}
-
-
-button.action-button, button.menu-button, button.back-to-menu, .shop-item button {
-    background: linear-gradient(145deg, #ff8c00, #ff6347); /* Orange/Tomato gradient */
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.1em;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    margin-top: 15px;
-}
-
-button.action-button:hover, button.menu-button:hover, button.back-to-menu:hover, .shop-item button:hover {
-    background: linear-gradient(145deg, #ff6347, #ff8c00);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
+/* Update if menu-buttons need more rows now */
 .menu-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
+    /* Adjust columns if too many items for one row, e.g., 3 columns */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Keeps it responsive */
+    gap: 15px; /* Reduced gap a bit */
     width: 100%;
-    max-width: 500px; /* Control width of menu buttons grid */
-    margin-top: 30px;
-}
-
-.menu-button {
-    padding: 20px; /* Larger clickable area for menu buttons */
-}
-
-.back-to-menu {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 15px;
-    font-size: 0.9em;
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.back-to-menu:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* Game Screen specific content styling */
-.game-screen div[id$="-game-content"] { /* Selects divs like 'slots-game-content' */
-    margin-top: 30px;
-    padding: 20px;
-    background-color: rgba(0,0,0,0.3);
-    border-radius: 10px;
-    width: 80%;
-}
-
-.game-screen div[id$="-game-content"] button {
-    background: #4CAF50; /* Green for game actions */
-    margin: 5px;
-}
-.game-screen div[id$="-game-content"] button:hover {
-    background: #45a049;
-}
-
-
-/* Shop Styling */
-#shop-items {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    max-width: 650px; /* May need to increase max-width */
     margin-top: 20px;
-    width: 80%;
-    max-height: 300px; /* Max height for scroll if many items */
-    overflow-y: auto; /* Enable scroll if items exceed max height */
 }
 
-.shop-item {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+@media (max-width: 768px) {
+     .menu-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Smaller buttons on tablet */
+    }
 }
 
-.shop-item h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #ffc107; /* Amber for item titles */
-}
-
-.shop-item p {
-    margin: 5px 0;
-}
-
-.shop-item button {
-    font-size: 1em;
-    padding: 10px 20px;
-    background: #007bff; /* Blue for buy buttons */
-}
-.shop-item button:hover {
-    background: #0056b3;
-}
-
-/* Basic responsiveness */
 @media (max-width: 600px) {
-    .game-container {
-        width: 95%;
-        padding: 15px;
-    }
-    h1 { font-size: 2em; }
-    h2 { font-size: 1.8em; }
-    .menu-buttons {
-        grid-template-columns: 1fr; /* Stack menu buttons on small screens */
-    }
-    .player-stats, .player-stats-ingame {
-        font-size: 1em;
-        padding: 6px 10px;
-        position: static; /* Stack stats for easier reading on small screens */
+    .player-stats-ingame, #shop-screen .player-stats-ingame {
+        position: static; /* Stack stats on small screens */
         margin-bottom: 15px;
+        text-align: center;
+        width: 100%;
     }
-    .back-to-menu {
-         position: static;
-         margin-bottom: 10px;
+    .game-screen .back-to-menu { /* Ensure back button is visible on game screens too */
+        position: absolute; /* Or static if stats push it too far */
+        top: 15px;
+        left: 15px;
+    }
+    .slots-grid-container {
+        width: 150px;
+        height: 150px;
+    }
+    .slot-reel {
+        font-size: 1.5em;
     }
 }
