@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Fortune Deluxe</title>
+    <title>Wheel of Fortune Deluxe II</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="main-container">
         <div id="shop">
             <h2>Shop</h2>
-            <div class="shop-item" id="pickup-trash" data-type="points_pickup">
+            <div class="shop-item" id="pickup-trash">
                 Pick Up Trash <br> (Free - Get 1 Point)
             </div>
-            <div class="shop-item" id="upgrade-multiplier" data-type="upgrade_multiplier">
+            <div class="shop-item" id="upgrade-multiplier">
                 Upgrade Multiplier (Lv. 1) <br> Cost: 100 Points
             </div>
-            <div class="shop-item" id="upgrade-spin-speed" data-type="upgrade_spin_speed">
+            <div class="shop-item" id="upgrade-spin-speed">
                 Upgrade Spin Speed (Lv. 1) <br> Cost: 150 Points
             </div>
-            <div class="shop-item" id="buy-golden-ticket" data-type="buy_golden_ticket">
-                Buy Golden Spin Ticket (x0) <br> Cost: 5000 Points
+            <div class="shop-item" id="activate-golden-spin">
+                Activate Golden Spin (100x) <br> Cost: 5000 Points
             </div>
-            <div class="shop-item" id="unlock-auto-spin" data-type="unlock_auto_spin">
+            <div class="shop-item" id="reroll-wheel-values">
+                Shift Wheel Values <br> Cost: 1000 Points
+            </div>
+            <div class="shop-item" id="unlock-negative-protection">
+                Unlock Negative Protection <br> Cost: 7500 Points
+            </div>
+            <div class="shop-item" id="upgrade-flat-bonus">
+                Add Base Spin Point (Lv. 1) <br> Cost: 50 Points
+            </div>
+            <div class="shop-item" id="unlock-auto-spin">
                 Unlock Auto-Spin <br> Cost: 10,000,000 Points
             </div>
-            <!-- Auto-spin button will be added here by JS if unlocked -->
             <button id="auto-spin-button" style="display:none; margin-top: 20px;">Auto-Spin (Cost: 25)</button>
         </div>
 
         <div id="game-area">
-            <h1>Wheel of Fortune Deluxe</h1>
+            <h1>Wheel of Fortune Deluxe II</h1>
             <div id="wheel-container">
                 <canvas id="wheelCanvas" width="400" height="400"></canvas>
                 <div id="pointer"></div>
@@ -40,10 +48,11 @@
                 <p>Points: <span id="points-display">0</span></p>
                 <p>Multiplier: <span id="multiplier-display">1x</span></p>
                 <p>Spin Speed: <span id="spin-speed-display">Normal</span></p>
-                <p>Golden Tickets: <span id="golden-tickets-display">0</span></p>
+                <p>Base Point Bonus: <span id="flat-bonus-display">+0</span></p>
+                <p>Golden Spin: <span id="golden-spin-status-display">Inactive</span></p>
+                <p>Negative Protection: <span id="negative-protection-status-display">Inactive</span></p>
             </div>
             <div id="message-display"></div>
-             <div id="active-golden-spin-indicator" style="display:none; color: gold; font-weight: bold; margin-top:10px;">GOLDEN SPIN ACTIVE! (Next point win x100)</div>
         </div>
 
         <div id="controls">
