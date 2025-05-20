@@ -3,9 +3,9 @@ body, html {
     padding: 0;
     font-family: 'Arial', sans-serif;
     height: 100%;
-    background: linear-gradient(135deg, #2c3e50, #3498db, #2980b9);
-    color: #ecf0f1;
-    overflow: hidden; /* Prevents scrollbars from slight overflows */
+    background: linear-gradient(135deg, #1a2a3a, #2a5275, #1a3b5a); /* Darker, richer blue gradient */
+    color: #e0e0e0; /* Lighter text for contrast */
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,55 +15,71 @@ body, html {
     display: flex;
     width: 95vw;
     height: 90vh;
-    max-width: 1200px;
-    background-color: rgba(44, 62, 80, 0.85);
+    max-width: 1300px; /* Slightly wider for more space */
+    background-color: rgba(30, 45, 60, 0.9); /* Darker semi-transparent background */
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     padding: 20px;
 }
 
 #shop {
-    flex: 1;
+    flex: 1.2; /* Slightly more space for the shop */
     padding: 20px;
-    border-right: 2px solid #34495e;
+    border-right: 2px solid #2c3e50; /* Slightly darker border */
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 #shop h2 {
     text-align: center;
-    color: #e67e22;
+    color: #f39c12; /* Orange/gold color for titles */
     margin-bottom: 20px;
 }
 
 .shop-item {
-    background-color: #34495e;
-    padding: 15px;
-    margin-bottom: 15px;
+    background-color: #2c3e50; /* Darker shop items */
+    color: #ecf0f1;
+    padding: 12px; /* Adjust padding */
+    margin-bottom: 12px; /* Adjust margin */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     text-align: center;
+    border: 1px solid #34495e; /* Subtle border */
 }
 
 .shop-item:hover {
-    background-color: #4a6572;
+    background-color: #34495e; /* Lighter on hover */
     transform: translateY(-2px);
 }
 
-.shop-item.purchased {
-    background-color: #27ae60; /* Green when purchased/active */
-    color: #fff;
-    cursor: not-allowed;
-}
-.shop-item.disabled {
-    background-color: #7f8c8d;
+.shop-item.disabled, #unlock-auto-spin.purchased {
+    background-color: #505A66; /* Muted for disabled/purchased */
     cursor: not-allowed;
     opacity: 0.7;
+}
+#auto-spin-button {
+    background-color: #27ae60; /* Green for go */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#auto-spin-button:hover {
+    background-color: #2ecc71;
+}
+#auto-spin-button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
 }
 
 
 #game-area {
-    flex: 3;
+    flex: 2.8; /* Adjust flex */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,21 +89,23 @@ body, html {
 }
 
 #game-area h1 {
-    color: #e67e22;
-    margin-bottom: 20px;
+    color: #f39c12;
+    margin-bottom: 15px;
 }
 
 #wheel-container {
     position: relative;
-    width: 400px; /* Canvas width */
-    height: 400px; /* Canvas height */
-    margin-bottom: 20px;
+    width: 400px;
+    height: 400px;
+    margin-bottom: 15px; /* Adjust margin */
 }
 
 #wheelCanvas {
     display: block;
-    border-radius: 50%; /* Makes the canvas visually round if needed, drawing will handle actual shape */
-    /* box-shadow: 0 0 20px rgba(0,0,0,0.3); */
+    border-radius: 50%;
+    /* Forcing visibility in case of issues, though default should be visible */
+    visibility: visible;
+    opacity: 1;
 }
 
 #pointer {
@@ -95,9 +113,9 @@ body, html {
     height: 0;
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
-    border-top: 30px solid #e74c3c; /* Red pointer */
+    border-top: 30px solid #e74c3c;
     position: absolute;
-    top: -10px; /* Position above the center of the wheel */
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -112,7 +130,7 @@ body, html {
     font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 #spin-button:hover {
@@ -129,19 +147,23 @@ body, html {
 
 #stats {
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1.0em; /* Slightly smaller for more stats */
+    background-color: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 5px;
 }
 
 #stats p {
-    margin: 5px 0;
+    margin: 4px 0;
 }
 
 #message-display {
-    margin-top: 15px;
+    margin-top: 10px;
     font-size: 1.1em;
-    color: #f1c40f; /* Yellow for messages */
-    min-height: 20px;
+    color: #f1c40f;
+    min-height: 22px;
     text-align: center;
+    font-weight: bold;
 }
 
 #controls {
@@ -167,14 +189,6 @@ body, html {
     background-color: #e74c3c;
 }
 
-/* For scrollbars in shop if needed */
-#shop::-webkit-scrollbar {
-    width: 8px;
-}
-#shop::-webkit-scrollbar-track {
-    background: #2c3e50;
-}
-#shop::-webkit-scrollbar-thumb {
-    background: #e67e22;
-    border-radius: 4px;
-}
+#shop::-webkit-scrollbar { width: 8px; }
+#shop::-webkit-scrollbar-track { background: #2c3e50; }
+#shop::-webkit-scrollbar-thumb { background: #f39c12; border-radius: 4px; }
