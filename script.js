@@ -6,18 +6,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const pointsDisplay = document.getElementById('points-display');
     const multiplierDisplay = document.getElementById('multiplier-display');
     const spinSpeedDisplay = document.getElementById('spin-speed-display');
-    const goldenTicketsDisplay = document.getElementById('golden-tickets-display');
+    const flatBonusDisplay = document.getElementById('flat-bonus-display');
+    const goldenSpinStatusDisplay = document.getElementById('golden-spin-status-display');
+    const negativeProtectionStatusDisplay = document.getElementById('negative-protection-status-display');
     const messageDisplay = document.getElementById('message-display');
     const resetButton = document.getElementById('reset-button');
-    const activeGoldenSpinIndicator = document.getElementById('active-golden-spin-indicator');
 
     // Shop Item Elements
     const pickupTrashButton = document.getElementById('pickup-trash');
     const upgradeMultiplierButton = document.getElementById('upgrade-multiplier');
     const upgradeSpinSpeedButton = document.getElementById('upgrade-spin-speed');
-    const buyGoldenTicketButton = document.getElementById('buy-golden-ticket');
+    const activateGoldenSpinButton = document.getElementById('activate-golden-spin');
+    const rerollWheelValuesButton = document.getElementById('reroll-wheel-values');
+    const unlockNegativeProtectionButton = document.getElementById('unlock-negative-protection');
+    const upgradeFlatBonusButton = document.getElementById('upgrade-flat-bonus');
     const unlockAutoSpinButton = document.getElementById('unlock-auto-spin');
-
 
     const baseSpinCost = 25;
     const basePointsToStart = 50;
@@ -27,50 +30,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSpinning = false;
 
     // --- Game State Variables ---
-    let multiplierLevel = 1; // For 1x, 2x, etc.
+    let multiplierLevel = 1;
     let currentMultiplier = 1;
 
     let spinSpeedLevel = 1;
-    let baseSpinDuration = 4000; // ms
+    let baseSpinDuration = 4000;
     let currentSpinDuration = baseSpinDuration;
 
-    let goldenSpinTickets = 0;
-    let activateNextSpinAsGolden = false;
+    let isGoldenSpinActive = false;
+    let goldenTicketPurchaseCount = 0; // Tracks how many times golden ticket was bought for price ramp
+
+    let negativeProtectionUnlocked = false;
+
+    let flatBonusPoints = 0;
+    let flatBonusLevel = 0; // Level 0 means +0 bonus, level 1 means +1 bonus
+    const maxFlatBonusLevel = 1000000; // Practical limit for flat bonus
 
     let autoSpinUnlocked = false;
 
     // --- Shop Item Configs ---
-    const multiplierConfig = {
-        baseCost: 100,
-        costMultiplier: 1.8, // Price increases by 80% each time
-        maxLevel: 10, // Example max
-    };
-    const spinSpeedConfig = {
-        baseCost: 150,
-        costMultiplier: 1.7,
-        durationReductionPerLevel: 300, // ms
-        minDuration: 500, // Minimum spin duration
-        maxLevel: 10,
-    };
-    const goldenTicketConfig = {
-        baseCost: 5000,
-        costMultiplier: 2.5, // Golden tickets get expensive fast
-        pointsMultiplier: 100, // The 1000x from prompt, let's use 100x as 1000x is huge
-    };
+    const multiplierConfig = { baseCost: 100, costMultiplier: 1.8, maxLevel: 10 };
+    const spinSpeedConfig = { baseCost: 150, costMultiplier: 1.7, durationReductionPerLevel: 300, minDuration: 500, maxLevel: 10 };
+    const goldenTicketConfig = { baseCost: 5000, costMultiplier: 2.2, activationMultiplier: 100 };
+    const rerollWheelCost = 1000;
+    const negativeProtectionCost = 7500;
+    const flatBonusConfig = { baseCost: 50, costIncreasePerLevel: 100 };
     const autoSpinUnlockCost = 100000000;
 
-
-    const segments = [
-        { text: '10', value: 10, color: '#3498db' },
-        { text: '50', value: 50, color: '#e67e22' },
-        { text: '100', value: 100, color: '#2ecc71' },
-        { text: 'Try Again', value: 0, color: '#95a5a6' },
-        { text: '25', value: 25, color: '#f1c40f' },
-        { text: 'JACKPOT! 250', value: 250, color: '#e74c3c', size: 0.5 },
-        { text: 'Bankrupt', value: 'bankrupt', color: '#34495e' },
-        { text: '5', value: 5, color: '#1abc9c' },
-        { text: '75', value: 75, color: '#9b59b6' },
-        { text: 'BONUS 150', value: 150, color: '#d35400' },
+    let segments = [ // Added 'type' for easier handling
+        { text: '10', value: 10, color: '#3498db', type: 'numeric' },
+        { text: '50', value: 50, color: '#e67e22', type: 'numeric' },
+        { text: '100', value: 100, color: '#2ecc71', type: 'numeric' },
+        { text: 'Try Again', value: 0, color: '#95a5a6', type: 'neutral' }, // Neutral, not rerolled, not affected by most things
+        { text: '25', value: 25, color: '#f1c40f', type: 'numeric' },
+        { text: 'JACKPOT! 250', value: 250, color: '#e74c3c', size: 0.5, type: 'numeric' },
+        { text: '-500 PTS', value: 'fixed_deduction', amount: -500, color: '#7f8c8d', type: 'special_deduction' },
+        { text: '5', value: 5, color: '#1abc9c', type: 'numeric' },
+        { text: '75', value: 75, color: '#9b59b6', type: 'numeric' },
+        { text: 'BONUS 150', value: 150, color: '#d35400', type: 'numeric' },
     ];
 
     function getTotalSize() {
@@ -78,14 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawWheel() {
-        if (!ctx) return; // Ensure context exists
+        if (!ctx) return;
         const totalSize = getTotalSize();
         let currentDrawAngle = 0;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
-        const radius = Math.min(centerX, centerY) - 8; // Add a bit more padding
+        const radius = Math.min(centerX, centerY) - 8;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before redraw
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         segments.forEach(segment => {
             const angle = (segment.size || 1) / totalSize * 2 * Math.PI;
@@ -95,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.closePath();
             ctx.fillStyle = segment.color;
             ctx.fill();
-            ctx.strokeStyle = '#444'; // Darker border for segments
+            ctx.strokeStyle = '#444';
             ctx.lineWidth = 2;
             ctx.stroke();
 
@@ -104,79 +101,78 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.rotate(currentDrawAngle + angle / 2);
             ctx.textAlign = 'right';
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 13px Arial'; // Slightly smaller text for crowded wheels
-            // Adjust text position for better visibility
-            if (segment.text.length > 8) { // If text is long
-                 ctx.fillText(segment.text, radius - 5, 5);
-            } else {
-                 ctx.fillText(segment.text, radius - 10, 5); // y changed to 5 for vertical centering
-            }
+            ctx.font = 'bold 12px Arial'; // Adjusted font for potentially longer text after reroll
+            ctx.fillText(segment.text, radius - 7, 4);
             ctx.restore();
             currentDrawAngle += angle;
         });
-         // console.log("Wheel Drawn");
     }
 
     function updateDisplays() {
-        pointsDisplay.textContent = points.toLocaleString(); // Format points
-        currentMultiplier = multiplierLevel; // Direct mapping for now
+        pointsDisplay.textContent = points.toLocaleString();
+        currentMultiplier = multiplierLevel;
         multiplierDisplay.textContent = `${currentMultiplier}x (Lv. ${multiplierLevel})`;
         spinSpeedDisplay.textContent = `Lv. ${spinSpeedLevel} (${(currentSpinDuration / 1000).toFixed(1)}s)`;
-        goldenTicketsDisplay.textContent = goldenSpinTickets;
+        flatBonusDisplay.textContent = `+${flatBonusPoints}`;
+        goldenSpinStatusDisplay.textContent = isGoldenSpinActive ? "ACTIVE (100x Next!)" : "Inactive";
+        goldenSpinStatusDisplay.style.color = isGoldenSpinActive ? "gold" : "#e0e0e0";
+        negativeProtectionStatusDisplay.textContent = negativeProtectionUnlocked ? "ACTIVE" : "Inactive";
+        negativeProtectionStatusDisplay.style.color = negativeProtectionUnlocked ? "lightgreen" : "#e0e0e0";
+
 
         const canAffordSpin = points >= baseSpinCost;
-        spinButton.disabled = isSpinning || !canAffordSpin;
-        autoSpinButton.disabled = isSpinning || !canAffordSpin || !autoSpinUnlocked;
+        spinButton.disabled = isSpinning || !canAffordSpin || isGoldenSpinActive; // Disable spin if golden is active (must spin to use it)
+         if(isGoldenSpinActive) spinButton.title = "Spin to use your Golden Spin!"; else spinButton.title = "";
+        autoSpinButton.disabled = isSpinning || !canAffordSpin || !autoSpinUnlocked || isGoldenSpinActive;
 
-        // Update Shop Item Texts & Disabled States
-        // Pickup Trash
-        pickupTrashButton.classList.remove('disabled'); // Always enabled
 
-        // Multiplier
-        const nextMultiplierCost = calculateCost(multiplierConfig.baseCost, multiplierConfig.costMultiplier, multiplierLevel);
+        // --- Update Shop Item Texts & Disabled States ---
+        pickupTrashButton.classList.remove('disabled');
+
+        const nextMultiplierCost = calculateRampingCost(multiplierConfig.baseCost, multiplierConfig.costMultiplier, multiplierLevel);
         upgradeMultiplierButton.innerHTML = `Upgrade Multiplier (Lv. ${multiplierLevel + 1}) <br> Cost: ${nextMultiplierCost.toLocaleString()} P`;
-        if (multiplierLevel >= multiplierConfig.maxLevel) {
-            upgradeMultiplierButton.innerHTML = `Upgrade Multiplier (MAX Lv.) <br> -----`;
-            upgradeMultiplierButton.classList.add('disabled');
-        } else {
-            upgradeMultiplierButton.classList.toggle('disabled', points < nextMultiplierCost);
-        }
+        upgradeMultiplierButton.classList.toggle('disabled', points < nextMultiplierCost || multiplierLevel >= multiplierConfig.maxLevel);
+        if (multiplierLevel >= multiplierConfig.maxLevel) upgradeMultiplierButton.innerHTML = `Upgrade Multiplier (MAX Lv.) <br> -----`;
 
-        // Spin Speed
-        const nextSpinSpeedCost = calculateCost(spinSpeedConfig.baseCost, spinSpeedConfig.costMultiplier, spinSpeedLevel);
+        const nextSpinSpeedCost = calculateRampingCost(spinSpeedConfig.baseCost, spinSpeedConfig.costMultiplier, spinSpeedLevel);
         upgradeSpinSpeedButton.innerHTML = `Upgrade Spin Speed (Lv. ${spinSpeedLevel + 1}) <br> Cost: ${nextSpinSpeedCost.toLocaleString()} P`;
-        if (spinSpeedLevel >= spinSpeedConfig.maxLevel || currentSpinDuration <= spinSpeedConfig.minDuration) {
-            upgradeSpinSpeedButton.innerHTML = `Upgrade Spin Speed (MAX Lv.) <br> -----`;
-            upgradeSpinSpeedButton.classList.add('disabled');
-        } else {
-            upgradeSpinSpeedButton.classList.toggle('disabled', points < nextSpinSpeedCost);
-        }
+        upgradeSpinSpeedButton.classList.toggle('disabled', points < nextSpinSpeedCost || spinSpeedLevel >= spinSpeedConfig.maxLevel || currentSpinDuration <= spinSpeedConfig.minDuration);
+        if (spinSpeedLevel >= spinSpeedConfig.maxLevel || currentSpinDuration <= spinSpeedConfig.minDuration) upgradeSpinSpeedButton.innerHTML = `Upgrade Spin Speed (MAX Lv.) <br> -----`;
 
-        // Golden Ticket
-        const nextGoldenTicketCost = calculateCost(goldenTicketConfig.baseCost, goldenTicketConfig.costMultiplier, goldenSpinTickets);
-        buyGoldenTicketButton.innerHTML = `Buy Golden Ticket (x${goldenSpinTickets}) <br> Cost: ${nextGoldenTicketCost.toLocaleString()} P`;
-        buyGoldenTicketButton.classList.toggle('disabled', points < nextGoldenTicketCost);
+        const nextGoldenTicketCost = calculateRampingCost(goldenTicketConfig.baseCost, goldenTicketConfig.costMultiplier, goldenTicketPurchaseCount);
+        activateGoldenSpinButton.innerHTML = isGoldenSpinActive ? `Golden Spin ACTIVE!` : `Activate Golden Spin (100x) <br> Cost: ${nextGoldenTicketCost.toLocaleString()} P`;
+        activateGoldenSpinButton.classList.toggle('disabled', points < nextGoldenTicketCost && !isGoldenSpinActive);
+        activateGoldenSpinButton.classList.toggle('active', isGoldenSpinActive);
 
-        // Auto Spin Unlock
+
+        rerollWheelValuesButton.innerHTML = `Shift Wheel Values <br> Cost: ${rerollWheelCost.toLocaleString()} P`;
+        rerollWheelValuesButton.classList.toggle('disabled', points < rerollWheelCost);
+
+        unlockNegativeProtectionButton.innerHTML = negativeProtectionUnlocked ? `Neg. Protection Unlocked` : `Unlock Negative Protection <br> Cost: ${negativeProtectionCost.toLocaleString()} P`;
+        unlockNegativeProtectionButton.classList.toggle('disabled', points < negativeProtectionCost && !negativeProtectionUnlocked);
+        if(negativeProtectionUnlocked) unlockNegativeProtectionButton.classList.add('purchased');
+
+
+        const nextFlatBonusCost = flatBonusConfig.baseCost + (flatBonusLevel * flatBonusConfig.costIncreasePerLevel); // Level 0 is base_cost, level 1 is base_cost + inc etc.
+        upgradeFlatBonusButton.innerHTML = `Add Base Spin Point (+${flatBonusPoints + 1}) <br> Cost: ${nextFlatBonusCost.toLocaleString()} P`;
+        upgradeFlatBonusButton.classList.toggle('disabled', points < nextFlatBonusCost || flatBonusLevel >= maxFlatBonusLevel );
+        if (flatBonusLevel >= maxFlatBonusLevel) upgradeFlatBonusButton.innerHTML = `Add Base Spin Point (MAX Lv.) <br> -----`;
+
+
         if (autoSpinUnlocked) {
             unlockAutoSpinButton.innerHTML = `Auto-Spin Unlocked <br> -----`;
-            unlockAutoSpinButton.classList.add('disabled'); // Show as purchased
+            unlockAutoSpinButton.classList.add('purchased');
             autoSpinButton.style.display = 'block';
         } else {
             unlockAutoSpinButton.innerHTML = `Unlock Auto-Spin <br> Cost: ${autoSpinUnlockCost.toLocaleString()} P`;
             unlockAutoSpinButton.classList.toggle('disabled', points < autoSpinUnlockCost);
             autoSpinButton.style.display = 'none';
         }
-         activeGoldenSpinIndicator.style.display = activateNextSpinAsGolden ? 'block' : 'none';
     }
 
-    function calculateCost(base, multiplier, level) {
-        return Math.floor(base * Math.pow(multiplier, level -1)); // For level 1, it's base cost
+    function calculateRampingCost(base, multiplier, level) { // For costs that multiply each level
+        return Math.floor(base * Math.pow(multiplier, level)); // level 0 = base, level 1 = base*multi, etc.
     }
-    function calculateNextPurchaseCost(base, multiplier, count) { // For items like tickets where count increases
-        return Math.floor(base * Math.pow(multiplier, count));
-    }
-
 
     function showMessage(text, duration = 3000, isError = false) {
         messageDisplay.textContent = text;
@@ -190,20 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isSpinning) return;
         if (points < baseSpinCost) {
             showMessage("Not enough points to spin!", 3000, true);
+            if (isAutoSpin) autoSpinButton.disabled = true; // Stop auto if cannot afford
             return;
         }
 
-        if (goldenSpinTickets > 0 && !activateNextSpinAsGolden) {
-             if (confirm("You have Golden Tickets! Use one for this spin for a 100x point bonus? (Cancelling will save the ticket)")) {
-                activateNextSpinAsGolden = true;
-             }
-        }
-        activeGoldenSpinIndicator.style.display = activateNextSpinAsGolden ? 'block' : 'none';
-
-
         points -= baseSpinCost;
         isSpinning = true;
-        updateDisplays(); // Update points and disable buttons
+        updateDisplays();
         showMessage("Spinning...");
 
         const totalSize = getTotalSize();
@@ -226,33 +215,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         targetSegmentMidAngle += ((segments[winningSegmentIndex].size || 1) * segmentAngle / 2);
 
-        const pointerOffset = -Math.PI / 2; // Pointer is at the top
-        const fullRotations = 5 + spinSpeedLevel; // More speed = more visual rotations
+        const pointerOffset = -Math.PI / 2;
+        const fullRotations = 5 + spinSpeedLevel;
         const finalTargetAngle = (fullRotations * 2 * Math.PI) - targetSegmentMidAngle + pointerOffset;
 
         let startTime = null;
-        const startRotationAngle = currentAngle; // Keep track of current visual rotation
+        const startRotationAngle = currentAngle;
 
         function animateSpin(timestamp) {
             if (!startTime) startTime = timestamp;
             const progress = timestamp - startTime;
             const easedProgress = easeOutCubic(Math.min(progress / currentSpinDuration, 1));
-
-            // Rotate the canvas element for visual spin
             const visualAngle = startRotationAngle + easedProgress * (finalTargetAngle - startRotationAngle);
             canvas.style.transform = `rotate(${visualAngle}rad)`;
 
             if (progress < currentSpinDuration) {
                 requestAnimationFrame(animateSpin);
             } else {
-                canvas.style.transform = `rotate(${finalTargetAngle}rad)`; // Ensure final position
-                currentAngle = finalTargetAngle % (2 * Math.PI); // Store the actual end angle for next spin start
+                canvas.style.transform = `rotate(${finalTargetAngle}rad)`;
+                currentAngle = finalTargetAngle % (2 * Math.PI);
                 isSpinning = false;
-                handleSpinResult(segments[winningSegmentIndex]);
-                if (isAutoSpin && autoSpinUnlocked && points >= baseSpinCost) {
-                    setTimeout(() => spinWheelLogic(true), 1000); // Brief pause before auto-spinning again
+                handleSpinResult(segments[winningSegmentIndex]); // This will also update displays and save
+                if (isAutoSpin && autoSpinUnlocked && points >= baseSpinCost && !isGoldenSpinActive) { // Don't auto-spin if golden is now active waiting for manual spin
+                    setTimeout(() => spinWheelLogic(true), 1200); // Slightly longer pause for readability
                 } else {
-                    updateDisplays(); // Re-enable buttons if not auto-spinning or can't afford
+                    updateDisplays(); // Ensure buttons are correctly enabled/disabled
                 }
             }
         }
@@ -262,30 +249,45 @@ document.addEventListener('DOMContentLoaded', () => {
     function easeOutCubic(t) { return (--t) * t * t + 1; }
 
     function handleSpinResult(segment) {
-        let gainedPoints = 0;
+        let actualGainedPoints = 0;
         let message = "";
 
-        if (segment.value === 'bankrupt') {
-            message = `Oh no! Bankrupt! You lost all your points.`;
-            points = 0;
-        } else if (typeof segment.value === 'number' && segment.value > 0) {
-            gainedPoints = segment.value * currentMultiplier;
-            let goldenBonus = 0;
+        if (segment.type === 'special_deduction') {
+            actualGainedPoints = segment.amount; // e.g., -500
+            message = `Landed on ${segment.text}. You lose ${Math.abs(actualGainedPoints)} points.`;
+        } else if (segment.type === 'neutral') { // e.g., Try Again (value 0)
+            actualGainedPoints = 0;
+            message = `Landed on ${segment.text}. No change in points.`;
+        } else if (segment.type === 'numeric') {
+            let baseValue = segment.value;
+            let spinValueWithBonus = baseValue + flatBonusPoints;
 
-            if (activateNextSpinAsGolden) {
-                goldenBonus = gainedPoints * (goldenTicketConfig.pointsMultiplier -1); // -1 because base gain is already counted
-                gainedPoints += goldenBonus;
-                goldenSpinTickets--;
-                activateNextSpinAsGolden = false; // Consume ticket
-                message = `GOLDEN SPIN! You won ${gainedPoints.toLocaleString()} points! (${segment.value} x ${currentMultiplier} + Golden x${goldenTicketConfig.pointsMultiplier}!)`;
+            if (spinValueWithBonus < 0 && negativeProtectionUnlocked) {
+                actualGainedPoints = 25; // Negative protection outcome
+                message = `Landed on ${baseValue}. Negative Protection changed it to +25 points!`;
             } else {
-                 message = `You won ${gainedPoints.toLocaleString()} points! (${segment.value} x ${currentMultiplier})`;
+                actualGainedPoints = spinValueWithBonus * currentMultiplier;
+
+                if (isGoldenSpinActive && spinValueWithBonus > 0) { // Golden spin only applies if base value + flat bonus was positive
+                    actualGainedPoints *= goldenTicketConfig.activationMultiplier;
+                    message = `GOLDEN SPIN! Landed on ${baseValue}. With bonuses & x${currentMultiplier} & GOLDEN x${goldenTicketConfig.activationMultiplier}, you get ${actualGainedPoints.toLocaleString()} points!`;
+                    isGoldenSpinActive = false; // Consume golden ticket
+                } else if (isGoldenSpinActive && spinValueWithBonus <= 0) {
+                     message = `Landed on ${baseValue}. Golden spin not applied to non-positive outcome. Points: ${actualGainedPoints.toLocaleString()}`;
+                     isGoldenSpinActive = false; // Still consume it as an attempt was made
+                }
+                else {
+                    message = `Landed on ${baseValue}. With +${flatBonusPoints} bonus & x${currentMultiplier} multiplier, you get ${actualGainedPoints.toLocaleString()} points.`;
+                }
             }
-            points += gainedPoints;
-        } else { // Try Again or 0 points
-            message = `Landed on: ${segment.text}. No points this time.`;
+        } else {
+            message = `Landed on ${segment.text}. (Unknown segment type)`;
         }
-        showMessage(message, 4000);
+
+        points += actualGainedPoints;
+        if (points < 0) points = 0; // Prevent negative total points
+
+        showMessage(message, 5000);
         updateDisplays();
         saveGame();
     }
@@ -293,154 +295,167 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Shop Logic ---
     pickupTrashButton.addEventListener('click', () => {
         points += 1;
-        showMessage("+1 Point from picking up trash!", 2000);
-        updateDisplays();
-        saveGame();
+        showMessage("+1 Point!", 2000);
+        updateDisplays(); saveGame();
     });
 
     upgradeMultiplierButton.addEventListener('click', () => {
-        if (multiplierLevel >= multiplierConfig.maxLevel) {
-            showMessage("Multiplier is already at max level!", 2000, true);
-            return;
-        }
-        const cost = calculateCost(multiplierConfig.baseCost, multiplierConfig.costMultiplier, multiplierLevel);
+        if (multiplierLevel >= multiplierConfig.maxLevel) return;
+        const cost = calculateRampingCost(multiplierConfig.baseCost, multiplierConfig.costMultiplier, multiplierLevel);
         if (points >= cost) {
-            points -= cost;
-            multiplierLevel++;
-            currentMultiplier = multiplierLevel; // Update immediately
-            showMessage(`Multiplier upgraded to Level ${multiplierLevel} (${currentMultiplier}x)!`, 3000);
-            updateDisplays();
-            saveGame();
-        } else {
-            showMessage("Not enough points to upgrade multiplier!", 2000, true);
-        }
+            points -= cost; multiplierLevel++;
+            showMessage(`Multiplier upgraded to Lv ${multiplierLevel} (${multiplierLevel}x)!`, 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points!", 2000, true); }
     });
 
     upgradeSpinSpeedButton.addEventListener('click', () => {
-        if (spinSpeedLevel >= spinSpeedConfig.maxLevel || currentSpinDuration <= spinSpeedConfig.minDuration) {
-            showMessage("Spin speed is already at max level or fastest!", 2000, true);
-            return;
-        }
-        const cost = calculateCost(spinSpeedConfig.baseCost, spinSpeedConfig.costMultiplier, spinSpeedLevel);
+        if (spinSpeedLevel >= spinSpeedConfig.maxLevel || currentSpinDuration <= spinSpeedConfig.minDuration) return;
+        const cost = calculateRampingCost(spinSpeedConfig.baseCost, spinSpeedConfig.costMultiplier, spinSpeedLevel);
         if (points >= cost) {
-            points -= cost;
-            spinSpeedLevel++;
-            currentSpinDuration = Math.max(spinSpeedConfig.minDuration, baseSpinDuration - (spinSpeedLevel-1) * spinSpeedConfig.durationReductionPerLevel);
-            showMessage(`Spin speed upgraded to Level ${spinSpeedLevel}! Duration: ${(currentSpinDuration/1000).toFixed(1)}s`, 3000);
-            updateDisplays();
-            saveGame();
-        } else {
-            showMessage("Not enough points to upgrade spin speed!", 2000, true);
-        }
+            points -= cost; spinSpeedLevel++;
+            currentSpinDuration = Math.max(spinSpeedConfig.minDuration, baseSpinDuration - (spinSpeedLevel - 1) * spinSpeedConfig.durationReductionPerLevel);
+            showMessage(`Spin speed upgraded to Lv ${spinSpeedLevel}!`, 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points!", 2000, true); }
     });
 
-    buyGoldenTicketButton.addEventListener('click', () => {
-        const cost = calculateNextPurchaseCost(goldenTicketConfig.baseCost, goldenTicketConfig.costMultiplier, goldenSpinTickets);
+    activateGoldenSpinButton.addEventListener('click', () => {
+        if (isGoldenSpinActive) return;
+        const cost = calculateRampingCost(goldenTicketConfig.baseCost, goldenTicketConfig.costMultiplier, goldenTicketPurchaseCount);
         if (points >= cost) {
             points -= cost;
-            goldenSpinTickets++;
-            showMessage(`Golden Spin Ticket purchased! You have ${goldenSpinTickets}.`, 3000);
-            updateDisplays();
-            saveGame();
-        } else {
-            showMessage("Not enough points to buy a Golden Ticket!", 2000, true);
-        }
+            isGoldenSpinActive = true;
+            goldenTicketPurchaseCount++;
+            showMessage(`Golden Spin (100x) ACTIVATED for next spin!`, 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points for Golden Spin!", 2000, true); }
+    });
+
+    rerollWheelValuesButton.addEventListener('click', () => {
+        if (points >= rerollWheelCost) {
+            points -= rerollWheelCost;
+            segments.forEach(seg => {
+                if (seg.type === 'numeric') {
+                    seg.value = Math.floor(Math.random() * 3501) - 500; // -500 to 3000
+                    seg.text = seg.value.toString(); // Basic text update
+                    if (seg.value > 1000) seg.text = (seg.value / 1000).toFixed(1) + "k";
+                    else if (seg.value < -99) seg.text = seg.value.toString();
+                }
+            });
+            drawWheel();
+            showMessage("Wheel values have been shifted!", 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points to shift wheel values!", 2000, true); }
+    });
+
+    unlockNegativeProtectionButton.addEventListener('click', () => {
+        if (negativeProtectionUnlocked) return;
+        if (points >= negativeProtectionCost) {
+            points -= negativeProtectionCost;
+            negativeProtectionUnlocked = true;
+            showMessage("Negative Point Protection Unlocked!", 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points for Negative Protection!", 2000, true); }
+    });
+
+    upgradeFlatBonusButton.addEventListener('click', () => {
+        if (flatBonusLevel >= maxFlatBonusLevel) return;
+        const cost = flatBonusConfig.baseCost + (flatBonusLevel * flatBonusConfig.costIncreasePerLevel);
+        if (points >= cost) {
+            points -= cost;
+            flatBonusLevel++;
+            flatBonusPoints++; // Each level adds 1 point to the bonus
+            showMessage(`Base Spin Bonus upgraded to +${flatBonusPoints}!`, 3000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points to upgrade Base Spin Bonus!", 2000, true); }
     });
 
     unlockAutoSpinButton.addEventListener('click', () => {
-        if (autoSpinUnlocked) {
-            showMessage("Auto-Spin is already unlocked!", 2000, true);
-            return;
-        }
+        if (autoSpinUnlocked) return;
         if (points >= autoSpinUnlockCost) {
-            points -= autoSpinUnlockCost;
-            autoSpinUnlocked = true;
-            showMessage("Auto-Spin Unlocked! The Auto-Spin button is now available.", 4000);
-            updateDisplays();
-            saveGame();
-        } else {
-            showMessage("Not enough points to unlock Auto-Spin!", 2000, true);
-        }
+            points -= autoSpinUnlockCost; autoSpinUnlocked = true;
+            showMessage("Auto-Spin Unlocked!", 4000);
+            updateDisplays(); saveGame();
+        } else { showMessage("Not enough points for Auto-Spin!", 2000, true); }
     });
 
-
-    // --- Core Game Actions ---
     spinButton.addEventListener('click', () => spinWheelLogic(false));
     autoSpinButton.addEventListener('click', () => {
-        if(autoSpinUnlocked && !isSpinning && points >= baseSpinCost) {
-            spinWheelLogic(true); // Start auto-spinning sequence
+        if(autoSpinUnlocked && !isSpinning && points >= baseSpinCost && !isGoldenSpinActive) {
+            spinWheelLogic(true);
+        } else if (isGoldenSpinActive) {
+            showMessage("Spin manually to use your Golden Spin!", 2000, true);
         } else if (!autoSpinUnlocked) {
             showMessage("Unlock Auto-Spin first!", 2000, true);
-        } else if (isSpinning) {
-            // Optionally, could make this button stop auto-spinning if implemented that way
         } else {
-            showMessage("Not enough points for Auto-Spin!", 2000, true);
+            showMessage("Cannot Auto-Spin now (not enough points or already spinning).", 2000, true);
         }
     });
 
-
-    // --- Saving and Loading ---
     function saveGame() {
         const gameState = {
-            points,
-            multiplierLevel,
-            currentMultiplier, // Though derived, saving it is fine
-            spinSpeedLevel,
-            currentSpinDuration,
-            goldenSpinTickets,
-            autoSpinUnlocked,
-            currentAngle // Save visual angle of the wheel
+            points, multiplierLevel, spinSpeedLevel, currentSpinDuration,
+            isGoldenSpinActive, goldenTicketPurchaseCount,
+            negativeProtectionUnlocked,
+            flatBonusPoints, flatBonusLevel,
+            autoSpinUnlocked, currentAngle, segments // Save segments if they are rerolled
         };
-        localStorage.setItem('wheelOfFortuneDeluxeGame', JSON.stringify(gameState));
-        // console.log("Game Saved:", gameState);
+        localStorage.setItem('wheelOfFortuneDeluxeII', JSON.stringify(gameState));
     }
 
     function loadGame() {
-        const savedGame = localStorage.getItem('wheelOfFortuneDeluxeGame');
+        const savedGame = localStorage.getItem('wheelOfFortuneDeluxeII');
         if (savedGame) {
-            const gameState = JSON.parse(savedGame);
-            points = gameState.points || basePointsToStart;
-            multiplierLevel = gameState.multiplierLevel || 1;
-            currentMultiplier = gameState.currentMultiplier || 1;
-            spinSpeedLevel = gameState.spinSpeedLevel || 1;
-            currentSpinDuration = gameState.currentSpinDuration || baseSpinDuration;
-            goldenSpinTickets = gameState.goldenSpinTickets || 0;
-            autoSpinUnlocked = gameState.autoSpinUnlocked || false;
-            currentAngle = gameState.currentAngle || 0;
-            canvas.style.transform = `rotate(${currentAngle}rad)`; // Restore visual wheel position
-            // console.log("Game Loaded:", gameState);
+            const gs = JSON.parse(savedGame);
+            points = gs.points || basePointsToStart;
+            multiplierLevel = gs.multiplierLevel || 1;
+            spinSpeedLevel = gs.spinSpeedLevel || 1;
+            currentSpinDuration = gs.currentSpinDuration || baseSpinDuration;
+            isGoldenSpinActive = gs.isGoldenSpinActive || false;
+            goldenTicketPurchaseCount = gs.goldenTicketPurchaseCount || 0;
+            negativeProtectionUnlocked = gs.negativeProtectionUnlocked || false;
+            flatBonusPoints = gs.flatBonusPoints || 0;
+            flatBonusLevel = gs.flatBonusLevel || 0;
+            autoSpinUnlocked = gs.autoSpinUnlocked || false;
+            currentAngle = gs.currentAngle || 0;
+            if (gs.segments) segments = gs.segments; // Load saved wheel segments
+
+            canvas.style.transform = `rotate(${currentAngle}rad)`;
         } else {
-            points = basePointsToStart;
-            // Initialize others to default if no save
-            multiplierLevel = 1; currentMultiplier = 1;
-            spinSpeedLevel = 1; currentSpinDuration = baseSpinDuration;
-            goldenSpinTickets = 0; autoSpinUnlocked = false;
-            currentAngle = 0;
-            // console.log("New Game Started");
+            // Initialize new game defaults
+            points = basePointsToStart; multiplierLevel = 1; spinSpeedLevel = 1; currentSpinDuration = baseSpinDuration;
+            isGoldenSpinActive = false; goldenTicketPurchaseCount = 0; negativeProtectionUnlocked = false;
+            flatBonusPoints = 0; flatBonusLevel = 0; autoSpinUnlocked = false; currentAngle = 0;
         }
     }
 
     function resetGameData() {
-        if (confirm("Are you sure you want to reset all game data? This cannot be undone.")) {
-            localStorage.removeItem('wheelOfFortuneDeluxeGame');
-            // Reset all variables to initial states
-            points = basePointsToStart;
-            multiplierLevel = 1; currentMultiplier = 1;
-            spinSpeedLevel = 1; currentSpinDuration = baseSpinDuration;
-            goldenSpinTickets = 0; activateNextSpinAsGolden = false;
-            autoSpinUnlocked = false;
-            currentAngle = 0;
-            canvas.style.transform = `rotate(0rad)`;
-
+        if (confirm("Are you sure you want to reset ALL game data?")) {
+            localStorage.removeItem('wheelOfFortuneDeluxeII');
+            // Re-initialize default segments in case they were modified
+            segments = [
+                { text: '10', value: 10, color: '#3498db', type: 'numeric' },
+                { text: '50', value: 50, color: '#e67e22', type: 'numeric' },
+                { text: '100', value: 100, color: '#2ecc71', type: 'numeric' },
+                { text: 'Try Again', value: 0, color: '#95a5a6', type: 'neutral' },
+                { text: '25', value: 25, color: '#f1c40f', type: 'numeric' },
+                { text: 'JACKPOT! 250', value: 250, color: '#e74c3c', size: 0.5, type: 'numeric' },
+                { text: '-500 PTS', value: 'fixed_deduction', amount: -500, color: '#7f8c8d', type: 'special_deduction' },
+                { text: '5', value: 5, color: '#1abc9c', type: 'numeric' },
+                { text: '75', value: 75, color: '#9b59b6', type: 'numeric' },
+                { text: 'BONUS 150', value: 150, color: '#d35400', type: 'numeric' },
+            ];
+            loadGame(); // This will set fresh defaults
             showMessage("Game Reset!", 3000);
+            drawWheel();
             updateDisplays();
-            drawWheel(); // Redraw initial static state of wheel
         }
     }
     resetButton.addEventListener('click', resetGameData);
 
     // Initial Setup
     loadGame();
-    drawWheel(); // Draw the static segments of the wheel
-    updateDisplays(); // Update all UI elements based on loaded/default state
+    drawWheel();
+    updateDisplays();
 });
