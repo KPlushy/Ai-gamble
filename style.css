@@ -3,8 +3,8 @@ body, html {
     padding: 0;
     font-family: 'Arial', sans-serif;
     height: 100%;
-    background: linear-gradient(135deg, #1a2a3a, #2a5275, #1a3b5a); /* Darker, richer blue gradient */
-    color: #e0e0e0; /* Lighter text for contrast */
+    background: linear-gradient(135deg, #1a2a3a, #2a5275, #1a3b5a);
+    color: #e0e0e0;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -15,17 +15,17 @@ body, html {
     display: flex;
     width: 95vw;
     height: 90vh;
-    max-width: 1300px; /* Slightly wider for more space */
-    background-color: rgba(30, 45, 60, 0.9); /* Darker semi-transparent background */
+    max-width: 1300px;
+    background-color: rgba(30, 45, 60, 0.9);
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     padding: 20px;
 }
 
 #shop {
-    flex: 1.2; /* Slightly more space for the shop */
+    flex: 1.2;
     padding: 20px;
-    border-right: 2px solid #2c3e50; /* Slightly darker border */
+    border-right: 2px solid #2c3e50;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -33,34 +33,43 @@ body, html {
 
 #shop h2 {
     text-align: center;
-    color: #f39c12; /* Orange/gold color for titles */
+    color: #f39c12;
     margin-bottom: 20px;
 }
 
 .shop-item {
-    background-color: #2c3e50; /* Darker shop items */
+    background-color: #2c3e50;
     color: #ecf0f1;
-    padding: 12px; /* Adjust padding */
-    margin-bottom: 12px; /* Adjust margin */
+    padding: 10px; /* Reduced padding slightly for more items */
+    margin-bottom: 10px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     text-align: center;
-    border: 1px solid #34495e; /* Subtle border */
+    border: 1px solid #34495e;
+    font-size: 0.9em; /* Slightly smaller font for denser shop */
 }
 
 .shop-item:hover {
-    background-color: #34495e; /* Lighter on hover */
+    background-color: #34495e;
     transform: translateY(-2px);
 }
 
-.shop-item.disabled, #unlock-auto-spin.purchased {
-    background-color: #505A66; /* Muted for disabled/purchased */
+.shop-item.disabled, .shop-item.purchased, .shop-item.active {
+    background-color: #505A66;
     cursor: not-allowed;
     opacity: 0.7;
 }
+.shop-item.active { /* Specific for golden spin */
+    background-color: #f39c12;
+    color: #1a2a3a;
+    opacity: 1;
+    cursor: default;
+}
+
+
 #auto-spin-button {
-    background-color: #27ae60; /* Green for go */
+    background-color: #27ae60;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -68,6 +77,8 @@ body, html {
     font-size: 1em;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 90%;
+    align-self: center;
 }
 #auto-spin-button:hover {
     background-color: #2ecc71;
@@ -79,7 +90,7 @@ body, html {
 
 
 #game-area {
-    flex: 2.8; /* Adjust flex */
+    flex: 2.8;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -90,20 +101,19 @@ body, html {
 
 #game-area h1 {
     color: #f39c12;
-    margin-bottom: 15px;
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 #wheel-container {
     position: relative;
-    width: 400px;
-    height: 400px;
-    margin-bottom: 15px; /* Adjust margin */
+    width: 380px; /* Slightly smaller wheel if space is tight */
+    height: 380px;
+    margin-bottom: 10px;
 }
 
 #wheelCanvas {
     display: block;
     border-radius: 50%;
-    /* Forcing visibility in case of issues, though default should be visible */
     visibility: visible;
     opacity: 1;
 }
@@ -111,11 +121,11 @@ body, html {
 #pointer {
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 30px solid #e74c3c;
+    border-left: 18px solid transparent; /* Slightly smaller pointer */
+    border-right: 18px solid transparent;
+    border-top: 27px solid #e74c3c;
     position: absolute;
-    top: -10px;
+    top: -9px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -124,13 +134,13 @@ body, html {
 #spin-button {
     background-color: #e67e22;
     color: white;
-    padding: 15px 30px;
+    padding: 12px 25px; /* Adjusted padding */
     border: none;
     border-radius: 8px;
-    font-size: 1.2em;
+    font-size: 1.1em; /* Adjusted font size */
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 #spin-button:hover {
@@ -147,21 +157,23 @@ body, html {
 
 #stats {
     text-align: center;
-    font-size: 1.0em; /* Slightly smaller for more stats */
+    font-size: 0.9em; /* Adjusted for more stats lines */
     background-color: rgba(0,0,0,0.2);
-    padding: 10px;
+    padding: 8px;
     border-radius: 5px;
+    width: 80%;
+    max-width: 300px;
 }
 
 #stats p {
-    margin: 4px 0;
+    margin: 3px 0;
 }
 
 #message-display {
     margin-top: 10px;
-    font-size: 1.1em;
+    font-size: 1em;
     color: #f1c40f;
-    min-height: 22px;
+    min-height: 20px;
     text-align: center;
     font-weight: bold;
 }
