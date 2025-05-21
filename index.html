@@ -3,57 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Fortune Deluxe II</title>
+    <title>Wheel of Fortune - The Ultimate Gamble</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="main-container">
         <div id="shop">
             <h2>Shop</h2>
-            <div class="shop-item" id="pickup-trash">
-                Pick Up Trash <br> (Free - Get 1 Point)
+            <div class="shop-section" id="general-shop">
+                <h3>General Upgrades</h3>
+                <div class="shop-item" id="pickup-trash">Pick Up Trash <br> (Free - Get 1 Point)</div>
+                <div class="shop-item" id="upgrade-multiplier">Upgrade Multiplier (Lv. 1) <br> Cost: 100 P</div>
+                <div class="shop-item" id="upgrade-spin-speed">Upgrade Spin Speed (Lv. 1) <br> Cost: 150 P</div>
+                <div class="shop-item" id="activate-golden-spin">Activate Golden Spin (100x) <br> Cost: 5000 P</div>
+                <div class="shop-item" id="reroll-wheel-values">Shift Main Wheel Values <br> Cost: 1000 P</div>
+                <div class="shop-item" id="unlock-negative-protection">Unlock Negative Protection <br> Cost: 7500 P</div>
+                <div class="shop-item" id="upgrade-flat-bonus">Add Base Spin Point (Lv. 1) <br> Cost: 50 P</div>
             </div>
-            <div class="shop-item" id="upgrade-multiplier">
-                Upgrade Multiplier (Lv. 1) <br> Cost: 100 Points
+
+            <div class="shop-section" id="job-shop" style="display:none;">
+                <h3>Employment Center</h3>
+                <div class="shop-item" id="get-a-job">Get a Job (1 PPS) <br> Cost: 10,000 P</div>
+                <div class="shop-item" id="job-promotion">Job Promotion (+5 PPS) <br> Cost: 25,000 P</div>
             </div>
-            <div class="shop-item" id="upgrade-spin-speed">
-                Upgrade Spin Speed (Lv. 1) <br> Cost: 150 Points
+
+            <div class="shop-section" id="wheel-unlock-shop">
+                <h3>Unlock New Wheels</h3>
+                <div class="shop-item" id="unlock-risky-wheel">Unlock Risky Wheel <br> Cost: 1,000,000 P</div>
+                <div class="shop-item" id="unlock-demon-wheel">Unlock Demon Wheel <br> Cost: 100,000,000,000 P</div>
             </div>
-            <div class="shop-item" id="activate-golden-spin">
-                Activate Golden Spin (100x) <br> Cost: 5000 Points
+             <div class="shop-section" id="misc-shop">
+                <h3>Miscellaneous</h3>
+                <div class="shop-item" id="unlock-auto-spin">Unlock Auto-Spin <br> Cost: 10,000,000 P</div>
             </div>
-            <div class="shop-item" id="reroll-wheel-values">
-                Shift Wheel Values <br> Cost: 1000 Points
-            </div>
-            <div class="shop-item" id="unlock-negative-protection">
-                Unlock Negative Protection <br> Cost: 7500 Points
-            </div>
-            <div class="shop-item" id="upgrade-flat-bonus">
-                Add Base Spin Point (Lv. 1) <br> Cost: 50 Points
-            </div>
-            <div class="shop-item" id="unlock-auto-spin">
-                Unlock Auto-Spin <br> Cost: 10,000,000 Points
-            </div>
-            <button id="auto-spin-button" style="display:none; margin-top: 20px;">Auto-Spin (Cost: 25)</button>
+            <button id="auto-spin-button" style="display:none; margin-top: 20px;">Auto-Spin Main Wheel</button>
         </div>
 
-        <div id="game-area">
-            <h1>Wheel of Fortune Deluxe II</h1>
-            <div id="wheel-container">
-                <canvas id="wheelCanvas" width="400" height="400"></canvas>
-                <div id="pointer"></div>
+        <div id="game-content-area">
+            <div id="game-navigation">
+                <button class="nav-button active-nav" data-wheel="main">Main Wheel</button>
+                <button class="nav-button" data-wheel="risky" id="nav-risky-wheel" style="display:none;">Risky Wheel</button>
+                <button class="nav-button" data-wheel="demon" id="nav-demon-wheel" style="display:none;">Demon Wheel</button>
             </div>
-            <button id="spin-button">Spin (Cost: 25 Points)</button>
-            <div id="stats">
+
+            <div id="main-wheel-area" class="wheel-section active-wheel-section">
+                <h1>Wheel of Fortune</h1>
+                <div class="wheel-container-outer">
+                    <canvas id="mainWheelCanvas" width="400" height="400"></canvas>
+                    <div class="pointer"></div>
+                </div>
+                <button id="spin-main-wheel-button">Spin Main Wheel (Cost: 25 P)</button>
+            </div>
+
+            <div id="risky-wheel-area" class="wheel-section" style="display:none;">
+                <h2>Risky Wheel</h2>
+                <div class="wheel-container-outer">
+                    <canvas id="riskyWheelCanvas" width="380" height="380"></canvas>
+                    <div class="pointer"></div>
+                </div>
+                <button id="spin-risky-wheel-button">Spin Risky Wheel (Cost: 1,000 P)</button>
+            </div>
+
+            <div id="demon-wheel-area" class="wheel-section" style="display:none;">
+                <h2>Demon Wheel</h2>
+                <div class="wheel-container-outer">
+                    <canvas id="demonWheelCanvas" width="380" height="380"></canvas>
+                    <div class="pointer"></div>
+                </div>
+                <button id="spin-demon-wheel-button">Spin Demon Wheel (Cost: 100,000,000 P)</button>
+            </div>
+            
+            <div id="stats-area">
                 <p>Points: <span id="points-display">0</span></p>
-                <p>Multiplier: <span id="multiplier-display">1x</span></p>
-                <p>Spin Speed: <span id="spin-speed-display">Normal</span></p>
-                <p>Base Point Bonus: <span id="flat-bonus-display">+0</span></p>
-                <p>Golden Spin: <span id="golden-spin-status-display">Inactive</span></p>
-                <p>Negative Protection: <span id="negative-protection-status-display">Inactive</span></p>
+                <p>Multiplier: <span id="multiplier-display">1x</span> | Speed: <span id="spin-speed-display">Normal</span></p>
+                <p>Base Bonus: <span id="flat-bonus-display">+0</span> | Golden: <span id="golden-spin-status-display">Inactive</span></p>
+                <p>Neg. Protect: <span id="negative-protection-status-display">Inactive</span></p>
+                <p>Passive Income: <span id="passive-income-display">0 PPS</span></p>
             </div>
             <div id="message-display"></div>
         </div>
+
 
         <div id="controls">
             <button id="reset-button">Reset Game</button>
