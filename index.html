@@ -9,9 +9,9 @@
 <body>
     <div id="main-container">
         <div id="shop">
-            <h2>Shop</h2>
+            <h2>The Interstellar Market</h2>
             <div class="shop-section" id="general-shop">
-                <h3>General Upgrades</h3>
+                <h3>Core Enhancements</h3>
                 <div class="shop-item" id="pickup-trash">Pick Up Trash <br> (Free - Get 1 Point)</div>
                 <div class="shop-item" id="upgrade-multiplier">Upgrade Multiplier (Lv. 1) <br> Cost: 100 P</div>
                 <div class="shop-item" id="upgrade-spin-speed">Upgrade Spin Speed (Lv. 1) <br> Cost: 150 P</div>
@@ -21,34 +21,32 @@
                 <div class="shop-item" id="upgrade-flat-bonus">Add Base Spin Point (Lv. 1) <br> Cost: 50 P</div>
             </div>
 
-            <div class="shop-section" id="risky-unlocks-shop" style="display:none;">
+            <div class="shop-section" id="advanced-upgrades-shop" style="display:none;">
                 <h3>Advanced Ventures</h3>
-                <div class="shop-item" id="upgrade-shop-discount">Shop Discount (Lv. 0 - 0%) <br> Cost: 50,000 P</div>
-                <div class="shop-item" id="boost-100-base-points">MEGA Base Points Boost (+100) <br> Cost: 250,000 P</div>
+                <div class="shop-item" id="upgrade-shop-discount">Improve Shop Discount (0%) <br> Cost: 50,000 P</div>
+                <div class="shop-item" id="upgrade-plus-100-base">Boost Base Points (+100) <br> Cost: 30,000 P</div>
             </div>
 
-            <div class="shop-section" id="job-shop" style="display:none;">
-                <h3>Employment Center</h3>
+            <div class="shop-section" id="employment-shop" style="display:none;">
+                <h3>Human Resources</h3>
                 <div class="shop-item" id="get-a-job">Get a Job (1 PPS) <br> Cost: 10,000 P</div>
                 <div class="shop-item" id="job-promotion">Job Promotion (+5 PPS) <br> Cost: 25,000 P</div>
-                <div class="shop-item" id="hire-employee">Hire Employee (+100 PPS) <br> Cost: 1,000,000 P</div>
+                <div class="shop-item" id="hire-employee">Hire Employee (+100 PPS) <br> Cost: 500,000 P</div>
             </div>
 
-
             <div class="shop-section" id="wheel-unlock-shop">
-                <h3>Unlock New Wheels</h3>
+                <h3>Dimensional Exploration</h3>
                 <div class="shop-item" id="unlock-risky-wheel">Unlock Risky Wheel <br> Cost: 1,000,000 P</div>
                 <div class="shop-item" id="unlock-demon-wheel">Unlock Demon Wheel <br> Cost: 100,000,000,000 P</div>
             </div>
-             <div class="shop-section" id="misc-shop">
-                <h3>Miscellaneous</h3>
+             <div class="shop-section" id="automation-shop">
+                <h3>Automation Bay</h3>
                 <div class="shop-item" id="unlock-auto-spin">Unlock Auto-Spin <br> Cost: 10,000,000 P</div>
             </div>
             <button id="auto-spin-button" style="display:none; margin-top: 20px;">Auto-Spin Main Wheel</button>
         </div>
 
         <div id="game-content-area">
-            <!-- Wheel Sections FIRST -->
             <div id="main-wheel-area" class="wheel-section active-wheel-section">
                 <h1>Wheel of Fortune</h1>
                 <div class="wheel-container-outer">
@@ -59,7 +57,7 @@
             </div>
 
             <div id="risky-wheel-area" class="wheel-section" style="display:none;">
-                <h2>Risky Wheel</h2>
+                <h2>Risky Wheel of Riches</h2>
                 <div class="wheel-container-outer">
                     <canvas id="riskyWheelCanvas" width="380" height="380"></canvas>
                     <div class="pointer"></div>
@@ -68,7 +66,7 @@
             </div>
 
             <div id="demon-wheel-area" class="wheel-section" style="display:none;">
-                <h2>Demon Wheel</h2>
+                <h2>The Demon's Bargain</h2>
                 <div class="wheel-container-outer">
                     <canvas id="demonWheelCanvas" width="380" height="380"></canvas>
                     <div class="pointer"></div>
@@ -76,7 +74,6 @@
                 <button id="spin-demon-wheel-button">Spin Demon Wheel (Cost: 100,000,000 P)</button>
             </div>
             
-            <!-- Navigation Bar BELOW wheels -->
             <div id="game-navigation">
                 <button class="nav-button active-nav" data-wheel="main">Main Wheel</button>
                 <button class="nav-button" data-wheel="risky" id="nav-risky-wheel" style="display:none;">Risky Wheel</button>
@@ -93,12 +90,10 @@
             <div id="message-display"></div>
         </div>
 
-
         <div id="controls">
             <button id="reset-button">Reset Game</button>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
