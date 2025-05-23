@@ -1,127 +1,106 @@
-/* ... (previous body, #main-container, #shop, .shop-item styles largely remain) ... */
 body, html {
-    margin: 0; padding: 0; font-family: 'Arial', sans-serif; height: 100%;
-    background: linear-gradient(135deg, #1c1c2e, #2a2a40, #13131f); /* Deeper space blue/purple */
-    color: #e8eaf6; /* Lighter, slightly lavender text */
-    overflow: hidden; display: flex; justify-content: center; align-items: center;
+    margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    height: 100%; background: linear-gradient(145deg, #1c1c2e, #2a2a40, #13131f); /* Deeper space blue/purple */
+    color: #d8d8e8; overflow: hidden; display: flex; justify-content: center; align-items: center;
 }
 #main-container {
-    display: flex; width: 98vw; height: 95vh; max-width: 1600px;
-    background-color: rgba(30, 30, 50, 0.93); /* Slightly more purple base */
-    border-radius: 15px; box-shadow: 0 10px 35px rgba(0,0,0,0.7); padding: 15px;
+    display: flex; width: 98vw; height: 96vh; max-width: 1700px; /* Wider for more content */
+    background-color: rgba(25, 25, 45, 0.94); border-radius: 18px; /* Softer radius */
+    box-shadow: 0 12px 40px rgba(0,0,0,0.75); padding: 18px;
 }
 #shop {
-    flex: 1.3; padding: 15px; border-right: 2px solid #393953; /* Purple-ish border */
+    flex: 1.4; /* More shop space */ padding: 18px; border-right: 2px solid #3a3a5a;
     overflow-y: auto; display: flex; flex-direction: column;
 }
-#shop h2 { text-align: center; color: #ff9800; margin-bottom: 15px; } /* Brighter orange */
-#shop h3 { color: #ffeb3b; margin-top: 10px; margin-bottom: 8px; border-bottom: 1px solid #555; padding-bottom: 5px;} /* Bright yellow */
-
+#shop h2 { text-align: center; color: #f0b90b; margin-bottom: 18px; font-size: 1.5em;} /* Gold color */
+#shop h3 { color: #a0a0e0; margin-top: 12px; margin-bottom: 10px; border-bottom: 1px solid #555; padding-bottom: 6px; font-size: 1.1em;}
+.shop-section { margin-bottom: 18px; padding: 5px; border: 1px dashed #444; border-radius: 5px; }
 .shop-item {
-    background-color: #4a4a6a; color: #f0f0ff; padding: 9px; margin-bottom: 9px;
-    border-radius: 7px; cursor: pointer; transition: all 0.2s ease;
-    text-align: center; border: 1px solid #5a5a7a; font-size: 0.85em;
+    background-color: #33334c; color: #e0e0f0; padding: 10px; margin-bottom: 10px;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s ease-in-out;
+    text-align: center; border: 1px solid #4a4a6a; font-size: 0.88em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-.shop-item:hover { background-color: #5f5f82; transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+.shop-item:hover { background-color: #40405c; transform: translateY(-2px) scale(1.01); box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
 .shop-item.disabled, .shop-item.purchased, .shop-item.active {
-    background-color: #6b6b83; cursor: not-allowed; opacity: 0.6;
+    background-color: #5a5a7a; cursor: not-allowed; opacity: 0.65;  box-shadow: none;
 }
-.shop-item.active { background-color: #ff9800; color: #1c1c2e; opacity: 1; cursor: default; }
-.shop-item.one-time-purchased { /* For "Mega Base Points Boost" */
-    background-color: #009688; /* Teal for one-time purchased */
-    color: #fff;
-    cursor: default;
-    opacity: 0.8;
-}
+.shop-item.active { background-color: #f0b90b; color: #1c1c2e; opacity: 1; cursor: default; font-weight: bold; }
 
+#game-content-area { flex: 2.8; display: flex; flex-direction: column; padding: 0 22px; }
 
-#game-content-area {
-    flex: 3;
-    display: flex;
-    flex-direction: column; /* Keep this to stack wheels above nav */
-    padding: 0 20px;
-}
-
-/* Wheel sections - remain largely the same, will be stacked */
-.wheel-section { display: none; flex-direction: column; align-items: center; flex-grow: 1; /* Allows wheel sections to take available space */ }
+/* Wheel sections and navigation - Nav is now at the bottom */
+.wheel-section { display: none; flex-direction: column; align-items: center; flex-grow: 1; /* Allow wheel area to take space */ }
 .wheel-section.active-wheel-section { display: flex; }
-.wheel-section h1, .wheel-section h2 { color: #ff9800; margin-bottom: 10px; }
+.wheel-section h1, .wheel-section h2 { color: #f0b90b; margin-bottom: 12px; font-size: 1.8em; text-shadow: 0 0 5px #f0b90b;}
 
 .wheel-container-outer {
-    position: relative;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative; margin-bottom: 18px; display: flex;
+    justify-content: center; align-items: center;
 }
-#mainWheelCanvas, #riskyWheelCanvas, #demonWheelCanvas { display: block; border-radius: 50%; }
+#mainWheelCanvas, #riskyWheelCanvas, #demonWheelCanvas { display: block; border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.3); }
 .pointer {
-    width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
-    border-top: 27px solid #f44336; /* Brighter red pointer */
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10;
+    width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent;
+    border-top: 30px solid #d9534f; /* Bootstrap danger red */
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 10;
+    filter: drop-shadow(0px -2px 2px rgba(0,0,0,0.5));
 }
 #main-wheel-area .wheel-container-outer { width: 400px; height: 400px; }
 #risky-wheel-area .wheel-container-outer, #demon-wheel-area .wheel-container-outer { width: 380px; height: 380px; }
 
-/* Navigation bar at the BOTTOM */
-#game-navigation {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px; /* Space above nav bar */
-    border-top: 1px solid #393953; /* Border above nav */
-    padding-top: 10px;
-    width: 100%; /* Ensure it spans width */
+#game-navigation { /* MOVED TO BOTTOM */
+    display: flex; justify-content: center; margin-top: 15px; /* Spacing from elements above */
+    border-top: 1px solid #3a3a5a; padding-top: 12px; width: 100%;
 }
 .nav-button {
-    background-color: #5f5f82; color: #e8eaf6; border: none;
-    padding: 10px 15px; margin: 0 5px; border-radius: 5px; cursor: pointer;
-    transition: background-color 0.3s; font-size: 0.9em;
+    background-color: #4a4a6a; color: #e0e0f0; border: none;
+    padding: 10px 18px; margin: 0 8px; border-radius: 6px; cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; font-size: 0.95em;
 }
-.nav-button:hover { background-color: #7c7ca5; }
-.nav-button.active-nav { background-color: #ff9800; color: #fff; }
+.nav-button:hover { background-color: #5a5a7a; transform: translateY(-1px); }
+.nav-button.active-nav { background-color: #f0b90b; color: #1c1c2e; font-weight: bold;}
 
 
+/* Spin Buttons Styling */
 #spin-main-wheel-button, #spin-risky-wheel-button, #spin-demon-wheel-button, #auto-spin-button {
-    background-color: #ff9800; color: white; padding: 12px 22px; border: none;
-    border-radius: 8px; font-size: 1em; cursor: pointer; transition: all 0.2s ease;
-    margin-bottom: 10px; min-width: 220px; text-align: center;
+    background-image: linear-gradient(to bottom, #f0b90b, #e67e22); /* Gold to orange gradient */
+    color: #1c1c2e; font-weight: bold; padding: 14px 25px; border: none;
+    border-radius: 8px; font-size: 1.05em; cursor: pointer; transition: all 0.2s ease;
+    margin-bottom: 12px; min-width: 240px; text-align: center;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.3);
 }
 #spin-main-wheel-button:hover, #spin-risky-wheel-button:hover, #spin-demon-wheel-button:hover, #auto-spin-button:hover {
-    background-color: #fb8c00; transform: scale(1.03);
+    background-image: linear-gradient(to bottom, #f3c73b, #e98b3a);
+    transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0,0,0,0.4);
 }
-#spin-main-wheel-button.golden-active { /* Special style when golden ticket is ready */
-    background-color: #ffeb3b; /* Bright yellow */
-    color: #333;
-    font-weight: bold;
+#spin-main-wheel-button:disabled, #spin-risky-wheel-button:disabled, #spin-demon-wheel-button:disabled, #auto-spin-button:disabled {
+    background-image: none; background-color: #777; color: #bbb;
+    cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7;
 }
 
-#spin-main-wheel-button:disabled, #spin-risky-wheel-button:disabled, #spin-demon-wheel-button:disabled, #auto-spin-button:disabled {
-    background-color: #9e9e9e; cursor: not-allowed; transform: none; opacity: 0.7;
-}
 
 #stats-area {
-    text-align: center; font-size: 0.90em; /* Slightly smaller for more info */
-    background-color: rgba(0,0,0,0.25);
-    padding: 8px; border-radius: 8px; width: 90%; max-width: 450px; /* Wider stats */
-    margin: 10px auto 0 auto; /* Margin top only, as nav is below */
+    text-align: center; font-size: 0.98em; background-color: rgba(0,0,0,0.3);
+    padding: 12px; border-radius: 10px; width: 95%; max-width: 450px; margin: 12px auto 0 auto; /* Margin top adjusted */
+    border: 1px solid #4a4a6a;
 }
-#stats-area p { margin: 3px 0; }
+#stats-area p { margin: 5px 0; }
 
 #message-display {
-    margin-top: 10px; font-size: 1em; color: #ffeb3b; min-height: 22px;
-    text-align: center; font-weight: bold;
+    margin-top: 12px; font-size: 1.05em; color: #f0b90b; min-height: 24px;
+    text-align: center; font-weight: bold; text-shadow: 0 0 3px #000;
 }
 
 #controls {
     flex: 0.3; display: flex; flex-direction: column; align-items: center;
-    justify-content: flex-end; padding-bottom: 20px; padding-left: 10px;
+    justify-content: flex-end; padding-bottom: 20px; padding-left: 12px;
 }
 #reset-button {
-    background-color: #e53935; color: white; padding: 10px 18px; border: none;
-    border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; font-size: 0.9em;
+    background-color: #d9534f; color: white; padding: 10px 20px; border: none;
+    border-radius: 6px; cursor: pointer; transition: background-color 0.3s ease; font-size: 0.9em;
 }
-#reset-button:hover { background-color: #f44336;}
+#reset-button:hover { background-color: #c9302c;}
 
-#shop::-webkit-scrollbar { width: 8px; }
-#shop::-webkit-scrollbar-track { background: #1c1c2e; }
-#shop::-webkit-scrollbar-thumb { background: #ff9800; border-radius: 4px; }
+#shop::-webkit-scrollbar { width: 9px; }
+#shop::-webkit-scrollbar-track { background: #2a2a40; }
+#shop::-webkit-scrollbar-thumb { background: #f0b90b; border-radius: 5px; }
