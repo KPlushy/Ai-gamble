@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Fortune - The Ultimate Gamble</title>
+    <title>Wheel of Fortune - Galactic Gamble</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,11 +21,19 @@
                 <div class="shop-item" id="upgrade-flat-bonus">Add Base Spin Point (Lv. 1) <br> Cost: 50 P</div>
             </div>
 
+            <div class="shop-section" id="risky-unlocks-shop" style="display:none;">
+                <h3>Advanced Ventures</h3>
+                <div class="shop-item" id="upgrade-shop-discount">Shop Discount (Lv. 0 - 0%) <br> Cost: 50,000 P</div>
+                <div class="shop-item" id="boost-100-base-points">MEGA Base Points Boost (+100) <br> Cost: 250,000 P</div>
+            </div>
+
             <div class="shop-section" id="job-shop" style="display:none;">
                 <h3>Employment Center</h3>
                 <div class="shop-item" id="get-a-job">Get a Job (1 PPS) <br> Cost: 10,000 P</div>
                 <div class="shop-item" id="job-promotion">Job Promotion (+5 PPS) <br> Cost: 25,000 P</div>
+                <div class="shop-item" id="hire-employee">Hire Employee (+100 PPS) <br> Cost: 1,000,000 P</div>
             </div>
+
 
             <div class="shop-section" id="wheel-unlock-shop">
                 <h3>Unlock New Wheels</h3>
@@ -40,12 +48,7 @@
         </div>
 
         <div id="game-content-area">
-            <div id="game-navigation">
-                <button class="nav-button active-nav" data-wheel="main">Main Wheel</button>
-                <button class="nav-button" data-wheel="risky" id="nav-risky-wheel" style="display:none;">Risky Wheel</button>
-                <button class="nav-button" data-wheel="demon" id="nav-demon-wheel" style="display:none;">Demon Wheel</button>
-            </div>
-
+            <!-- Wheel Sections FIRST -->
             <div id="main-wheel-area" class="wheel-section active-wheel-section">
                 <h1>Wheel of Fortune</h1>
                 <div class="wheel-container-outer">
@@ -73,12 +76,19 @@
                 <button id="spin-demon-wheel-button">Spin Demon Wheel (Cost: 100,000,000 P)</button>
             </div>
             
+            <!-- Navigation Bar BELOW wheels -->
+            <div id="game-navigation">
+                <button class="nav-button active-nav" data-wheel="main">Main Wheel</button>
+                <button class="nav-button" data-wheel="risky" id="nav-risky-wheel" style="display:none;">Risky Wheel</button>
+                <button class="nav-button" data-wheel="demon" id="nav-demon-wheel" style="display:none;">Demon Wheel</button>
+            </div>
+
             <div id="stats-area">
                 <p>Points: <span id="points-display">0</span></p>
                 <p>Multiplier: <span id="multiplier-display">1x</span> | Speed: <span id="spin-speed-display">Normal</span></p>
                 <p>Base Bonus: <span id="flat-bonus-display">+0</span> | Golden: <span id="golden-spin-status-display">Inactive</span></p>
                 <p>Neg. Protect: <span id="negative-protection-status-display">Inactive</span></p>
-                <p>Passive Income: <span id="passive-income-display">0 PPS</span></p>
+                <p>Passive Income: <span id="passive-income-display">0 PPS</span> | Shop Discount: <span id="shop-discount-display">0%</span></p>
             </div>
             <div id="message-display"></div>
         </div>
